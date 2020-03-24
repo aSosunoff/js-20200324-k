@@ -11,23 +11,33 @@
     2.4 [Переменные](https://learn.javascript.ru/variables)  
     2.5 [Типы данных](https://learn.javascript.ru/types)  
     2.6 [Преобразование типов](https://learn.javascript.ru/type-conversions)  
-    Задача: [Преобразование типов](https://learn.javascript.ru/task/primitive-conversions-questions)  
+    Задача: [Преобразование типов](https://learn.javascript.ru/task/primitive-conversions-questions)    
+    [Ответ](task_1.js)
     
     2.7 [Операторы](https://learn.javascript.ru/operators)  
     Задача: [Постфиксная и префиксная формы](https://learn.javascript.ru/task/increment-order)  
+    [Ответ](task_2.js)
     
     2.8 [Операторы сравнения](https://learn.javascript.ru/comparison)  
     2.10 [Условные операторы: if, '?'](https://learn.javascript.ru/ifelse)    
-    Задача: [Перепишите 'if' в '?'](https://learn.javascript.ru/task/rewrite-if-question)  
-    
+    Задача: [Перепишите 'if' в '?'](https://learn.javascript.ru/task/rewrite-if-question)   
+    [Ответ](task_3.js)
+
     2.11 [Логические операторы](https://learn.javascript.ru/logical-operators)  
     Задача: [Что выведет этот код?](https://learn.javascript.ru/task/alert-and-or)  
+    [Ответ](task_4.js)
+
     Задача: [Что выведет alert (И)?](https://learn.javascript.ru/task/alert-1-null-2)  
+    [Ответ](task_5.js)    
+
     Задача: [Что выведет alert (ИЛИ)?](https://learn.javascript.ru/task/alert-null-2-undefined)  
+    [Ответ](task_6.js)   
     
     2.12 [Циклы while и for](https://learn.javascript.ru/while-for)  
     Задача: [Выведите чётные числа](https://learn.javascript.ru/task/for-even)  
+    [Ответ](task_7.js)   
     
     2.13 [Конструкция "switch"](https://learn.javascript.ru/switch)  
     2.14 [Функции](https://learn.javascript.ru/function-basics)  
-    Задача: [Перепишите функцию, используя оператор '?' или '||'](https://learn.javascript.ru/task/rewrite-function-question-or) 
+    Задача: [Перепишите функцию, используя оператор '?' или '||'](https://learn.javascript.ru/task/rewrite-function-question-or)    
+    [Ответ](task_8.js)   
