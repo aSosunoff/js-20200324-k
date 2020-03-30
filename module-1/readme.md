@@ -11,10 +11,13 @@
     5.3 [Строки](https://learn.javascript.ru/string)  
     5.4 [Массивы](https://learn.javascript.ru/array)  
     Задача: [Скопирован ли массив?](https://learn.javascript.ru/task/item-value)  
+    [Ответ](task_1.js)  
     
     5.5 [Методы массивов](https://learn.javascript.ru/array-methods)  
     Задача: [Выделить число](https://learn.javascript.ru/task/extract-currency)  
+    [Ответ](task_2.js)  
     Задача: [Переведите текст вида border-left-width в borderLeftWidth](https://learn.javascript.ru/task/camelcase)  
+    [Ответ](task_3.js)  
     
 3. [Качество кода](https://learn.javascript.ru/code-quality)  
     3.1 [Отладка в браузере Chrome](https://learn.javascript.ru/debugging-chrome)  
@@ -22,10 +25,12 @@
     3.3 [Комментарии](https://learn.javascript.ru/comments) 
 
 Задачи:
-* опционально: написать ф-ю `sum(1)(2)(3)(5)` - к-я будет возвращать сумму аргументов к-е будут переданы ей.
+* опционально: написать ф-ю `sum(1)(2)(3)(5)` - к-я будет возвращать сумму аргументов к-е будут переданы ей.  
+[Ответ](task_4.js)  
 * опционально: написать ф-ю к-я принимает массив строк и возвращает новый отсортированный массив строк в 
 зависимости от второго параметра: “asc” или “desc” 
-`sortStrings(['b', 'a', 'c'], 'asc'); // ['a', 'b', 'c']`
+`sortStrings(['b', 'a', 'c'], 'asc'); // ['a', 'b', 'c']` 
+[Ответ](task_5.js)  
 
 ## Дополнительный задачи на приведение типов данных в JS:
 
