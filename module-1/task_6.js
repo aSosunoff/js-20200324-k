@@ -36,18 +36,6 @@ function returnTrue7(a, b) {
 	return a === b && 1 / a < 1 / b;
 }
 
-function TEST(a, b) {
-	return a === b;
-}
-
-let a = {
-	toString: () => 1,
-};
-
-let b = {
-	toString: () => 1,
-};
-
 [
 	[returnTrue1, "0000"],
 	[returnTrue2, NaN],
@@ -55,8 +43,7 @@ let b = {
 	[returnTrue4, Number.MAX_SAFE_INTEGER],
 	[returnTrue5, [0]],
 	[returnTrue6, [0]],
-	[TEST, a, b]
-	// [returnTrue7, Number.MAX_SAFE_INTEGER + 1, Number.MAX_SAFE_INTEGER + 2],
+	[returnTrue7, 1, 1],
 ].forEach(([f, ...arg]) => {
 	console.assert(f.apply(null, arg), `should return true ${f}`);
 });
