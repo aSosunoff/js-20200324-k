@@ -6,11 +6,15 @@
     5.7 [Map и Set](https://learn.javascript.ru/map-set)  
     5.9 [Object.keys, values, entries](https://learn.javascript.ru/keys-values-entries)   
     Задача: [Сумма свойств объекта](https://learn.javascript.ru/task/sum-salaries)  
+    [Ответ](task_1.js)  
     Задача: [Подсчёт количества свойств объекта](https://learn.javascript.ru/task/count-properties)  
+    [Ответ](task_2.js)  
     
     5.10 [Деструктурирующее присваивание](https://learn.javascript.ru/destructuring-assignment)  
     Задача: [Деструктурирующее присваивание](https://learn.javascript.ru/task/destruct-user)  
+    [Ответ](task_3.js)  
     Задача: [Максимальная зарплата](https://learn.javascript.ru/task/max-salary)  
+    [Ответ](task_4.js)  
     
 4. [Объекты: основы](https://learn.javascript.ru/object-basics)  
     4.2 [Сборка мусора](https://learn.javascript.ru/garbage-collection)  
