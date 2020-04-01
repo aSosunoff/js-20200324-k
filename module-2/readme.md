@@ -21,6 +21,7 @@
     4.3 [Тип данных Symbol](https://learn.javascript.ru/symbol)   
     4.4 [Методы объекта, "this"](https://learn.javascript.ru/object-methods)   
     Задача: [Создайте калькулятор](https://learn.javascript.ru/task/calculator)  
+    [Ответ](task_5.js)  
         
     4.5 [Преобразование объектов в примитивы](https://learn.javascript.ru/object-toprimitive)   
     4.6 [Конструкторы, создание объектов через "new"](https://learn.javascript.ru/constructor-new)   
@@ -35,7 +36,10 @@
 
 Задачи:
 
-* "createGetter" 
+* "createGetter"  
+
+[Ответ](task_6.js)  
+
 
 Example: 
 ```javascript
@@ -53,7 +57,9 @@ const getter = createGetter('category.title');
 console.error(getter(product)); // Goods
 ```
 
-* "invertObject" 
+* "invertObject"  
+
+[Ответ](task_7.js)  
 
 Example:
 ```javascript
@@ -64,14 +70,19 @@ const obj = {
 invertObject(obj); // {bar: 'foo'}
 ```
   
-* "trimSymbols"
+* "trimSymbols" 
+
+[Ответ](task_8.js)  
 
 Example:
 ```javascript
 trimSymbols('xxxaaaaab', 1); // 'xab'
 ```
   
-* "uniq"
+* "uniq"  
+
+[Ответ](task_9.js)  
+
 Example:
 ```javascript
 uniq([1, 2, 2, 3, 1, 4]); // [1, 2, 3, 4]
