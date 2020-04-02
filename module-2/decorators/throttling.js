@@ -1,24 +1,22 @@
 const throttle = (f, delay) => {
-    let isPass = false;
+    let timer = null;
     let lastArg = null;
 
 	return (...arg) => {
-		if (isPass) {
+		if (timer) {
             lastArg = arg;
             return;
         };
 
 		f.apply(this, arg);
 
-		setTimeout(() => {
+		timer = setTimeout(() => {
             if(lastArg)
                 f.apply(this, lastArg);
 
-            isPass = false;
             lastArg = null;
+            clearTimeout(timer);
         }, delay);
-
-		isPass = true;
 	};
 };
 
