@@ -3,9 +3,10 @@ const throttle = (f, delay) => {
     let lastArg = null;
 
 	return (...arg) => {
-        lastArg = arg;
-
-		if (isPass) return;
+		if (isPass) {
+            lastArg = arg;
+            return;
+        };
 
 		f.apply(this, arg);
 
