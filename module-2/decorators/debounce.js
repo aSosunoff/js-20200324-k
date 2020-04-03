@@ -4,16 +4,17 @@
 */
 
 const debounce = (f, delay) => {
-    let isPass = false;
+    let timer = null;
     
 	return (...arg) => {
-		if (isPass) return;
+		if (timer) return;
 
 		f.apply(this, arg);
 
-		setTimeout(() => isPass = false, delay);
-
-		isPass = true;
+		timer = setTimeout(() => {
+			clearTimeout(timer);
+			timer = null;
+		}, delay);
 	};
 };
 
