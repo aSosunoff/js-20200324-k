@@ -6,4 +6,4 @@
 
 ## To run tests:
 
-`npm test:jest`
+`npm run test:jest`
