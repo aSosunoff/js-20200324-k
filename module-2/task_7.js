@@ -2,14 +2,8 @@ const obj = {
 	foo: "bar"
 };
 
-const invertObject = obj => {
-    Object.entries(obj)
-        .forEach(([key, value]) => {
-            obj[value] = key;
-            delete obj[key];
-        });
-};
+const invertObject = obj => obj && Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [value, key])
+);
 
-invertObject(obj); // {bar: 'foo'}
-
-console.log(obj);
+console.log(invertObject(obj)); // {bar: 'foo'}

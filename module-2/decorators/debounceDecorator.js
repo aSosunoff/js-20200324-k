@@ -3,7 +3,7 @@
 Другими словами, когда мы вызываем debounce, это гарантирует, что все остальные вызовы будут игнорироваться в течение ms. 
 */
 
-const debounce = (f, delay) => {
+const debounceDecorator = (f, delay) => {
     let timer = null;
     
 	return (...arg) => {
@@ -20,7 +20,7 @@ const debounce = (f, delay) => {
 	};
 };
 
-let f = debounce(console.log, 1000);
+let f = debounceDecorator(console.log, 1000);
 
 f(1); // выполняется немедленно
 f(2); // проигнорирован

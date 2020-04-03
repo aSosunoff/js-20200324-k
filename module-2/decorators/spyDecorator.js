@@ -1,5 +1,5 @@
 // Декоратор-шпион
-const spy = f => {
+const spyDecorator = f => {
 	const  wrapper = (...arg) => {
 		wrapper.calls.push(arg);
 		return f.apply(this, arg);
@@ -15,7 +15,7 @@ function work(a, b) {
 	return a + b;
 }
 
-work = spy(work);
+work = spyDecorator(work);
 
 console.log(work(1, 2));
 console.log(work(3, 2));
