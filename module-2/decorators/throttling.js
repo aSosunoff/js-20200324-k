@@ -8,7 +8,9 @@ const throttle = (f, delay) => {
             return;
         };
 
-		f.apply(this, arg);
+        f.apply(this, arg);
+        
+        if (!delay) return;
 
 		timer = setTimeout(() => {
             if(lastArg)
@@ -20,9 +22,7 @@ const throttle = (f, delay) => {
 	};
 };
 
-function f(a) {
-	console.log(a);
-}
+const f = (a) => console.log(a);
 
 // f1000 передаёт вызовы f максимум раз в 1000 мс
 let f1000 = throttle(f, 1000);

@@ -1,42 +1,25 @@
 const trimSymbols = (str, count) => {
-	if (!count) return "";
+	if (count === 0 || !str) return "";
 
-	let result = "";
-	let c = 0;
-	let r = "";
+	if(!count) return str;
 
-	str.split("").forEach(char => {
-		debugger;
+	let charCount = 1;
 
-		let lastChar = r[r.length - 1];
-
-		if (!lastChar) {
-			r += char;
-		} else {
-			if (lastChar != char) {
-				c = 0;
-				r = char;
-				++c;
+	return str.split("")
+		.reduce((result, char) => {
+			if (char != result[result.length - 1]) {
+				charCount = 1;
+				result += char;
+				return result;
 			}
 
-			// if (c == 0) {
-			//     result += char;
-			//     ++c;
-			// }
-
-			if (lastChar == char && c < count) {
-				r += char;
-				++c;
+			if (charCount < count) {
+				result += char;
+				charCount++;
 			}
 
-			if (r.length == count) {
-				result += r;
-				r = "";
-			}
-		}
-	});
-
-	return result;
+			return result;
+		});
 };
 
-console.log(trimSymbols("xxxaaaaab", 1)); // 'xab'
+console.log(trimSymbols("xxxaaaaab", 2)); // 'xab'

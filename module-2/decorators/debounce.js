@@ -11,6 +11,8 @@ const debounce = (f, delay) => {
 
 		f.apply(this, arg);
 
+		if (!delay) return;
+
 		timer = setTimeout(() => {
 			clearTimeout(timer);
 			timer = null;
