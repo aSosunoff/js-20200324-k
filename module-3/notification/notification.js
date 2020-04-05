@@ -41,7 +41,7 @@ export default class NotificationMessage {
 		
 		clearTimeout(this.timer);
 
-		this.timer = setTimeout(this.remove.bind(this), this.duration);
+		//this.timer = setTimeout(this.remove.bind(this), this.duration);
 	}
 
 	initEventListeners() {}
