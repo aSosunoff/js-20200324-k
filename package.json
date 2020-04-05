@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:all": "jest",
-    "test:jest": "jest --findRelatedTests module-3/**/*.spec.js",
-    "test": "node_modules/.bin/jest --findRelatedTests module-3/**/*.spec.js",
+    "test:all": "./node_modules/.bin/jest",
+    "test2": "./node_modules/.bin/jest --findRelatedTests module-2/*.*/*.spec.js",
+    "test3": "./node_modules/.bin/jest --findRelatedTests module-3/*.*/*.spec.js",
     "serve": "static-server"
   },
   "repository": {
