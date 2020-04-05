@@ -6,7 +6,8 @@
   "scripts": {
     "test:all": "jest",
     "test:jest": "jest --findRelatedTests module-3/**/*.spec.js",
-    "test": "node_modules/.bin/jest --findRelatedTests module-3/**/*.spec.js"
+    "test": "node_modules/.bin/jest --findRelatedTests module-3/**/*.spec.js",
+    "serve": "static-server"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "@babel/preset-env": "^7.9.0",
     "@testing-library/jest-dom": "^5.3.0",
     "babel-jest": "^25.2.4",
-    "jest": "^25.2.4"
+    "jest": "^25.2.4",
+    "static-server": "^2.2.1"
   }
 }
