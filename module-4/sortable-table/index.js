@@ -14,8 +14,7 @@ class SortableTableCell {
 	element;
 
 	constructor(
-		{ id = "", title = "", sortable = false } = {},
-		{ order = "" } = {}
+		{ id = "", title = "", sortable = false, order = "" } = {}
 	) {
 		this.id = id;
 		this.title = title;
@@ -138,7 +137,7 @@ export default class SortableTable {
 		return this.headersConfig
 			.map((e) =>
 				e.id === field
-					? new SortableTableCell(e, { order }).element
+					? new SortableTableCell({ ...e, order }).element
 					: new SortableTableCell(e).element
 			)
 			.join("");
