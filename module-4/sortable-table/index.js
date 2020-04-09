@@ -133,7 +133,14 @@ export default class SortableTable {
 		);
 	}
 
-	getHeader(field, order) {
+	getHeader() {
+		return `
+			<div data-elem="header" class="sortable-table__header sortable-table__row">
+				${this.getHeaderRow()}
+			</div>`;
+	}
+
+	getHeaderRow(field, order) {
 		return this.headersConfig
 			.map((e) =>
 				e.id === field
@@ -144,6 +151,13 @@ export default class SortableTable {
 	}
 
 	getBody() {
+		return `
+			<div data-elem="body" class="sortable-table__body">
+				${this.getBodyRow()}
+			</div>`;
+	}
+
+	getBodyRow() {
 		return this.data
 			.map((e) => new SortableTableRow(this.headersConfig, e).element)
 			.join("");
@@ -152,12 +166,8 @@ export default class SortableTable {
 	getTable() {
 		return `
 		<div class="sortable-table">
-			<div data-elem="header" class="sortable-table__header sortable-table__row">
-				${this.getHeader()}
-			</div>
-			<div data-elem="body" class="sortable-table__body">
-				${this.getBody()}
-			</div>
+			${this.getHeader()}
+			${this.getBody()}
 		</div>`;
 	}
 
@@ -168,9 +178,9 @@ export default class SortableTable {
 
 		this.data = this.data.sort((a, b) => getSortTypeOrder(a[field], b[field]));
 
-		this.subElements.header.innerHTML = this.getHeader(field, order);
+		this.subElements.header.innerHTML = this.getHeaderRow(field, order);
 
-		this.subElements.body.innerHTML = this.getBody();
+		this.subElements.body.innerHTML = this.getBodyRow();
 	}
 
 	remove() {
