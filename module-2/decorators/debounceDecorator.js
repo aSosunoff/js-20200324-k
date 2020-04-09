@@ -3,7 +3,7 @@
 Другими словами, когда мы вызываем debounce, это гарантирует, что все остальные вызовы будут игнорироваться в течение ms. 
 */
 
-const debounceDecorator = (f, delay) => {
+/* const debounceDecorator = (f, delay) => {
     let timer = null;
     
 	return (...arg) => {
@@ -18,13 +18,34 @@ const debounceDecorator = (f, delay) => {
 			timer = null;
 		}, delay);
 	};
+}; */
+
+const debounceDecorator = (f, delay = 0) => {
+    let timer = null;
+    
+	return (...arg) => {
+		if (timer) {
+			clearTimeout(timer);
+			timer = null;
+		};		
+
+		timer = setTimeout(() => {
+			f.apply(this, arg);
+			clearTimeout(timer);
+			timer = null;
+		}, delay);
+	};
 };
 
-let f = debounceDecorator(console.log, 1000);
+
+let f = debounceDecorator(console.log, 100);
 
 f(1); // выполняется немедленно
 f(2); // проигнорирован
 
-setTimeout(() => f(3), 100); // проигнорирован (прошло только 100 мс)
-setTimeout(() => f(4), 1100); // выполняется
-setTimeout(() => f(5), 1500); // проигнорирован (прошло только 400 мс от последнего вызова)
+setTimeout(() => f(3), 90); // проигнорирован (прошло только 100 мс)
+setTimeout(() => f(4), 190); // проигнорирован (прошло только 100 мс)
+// setTimeout(() => f(5), 10); // проигнорирован (прошло только 100 мс)
+// setTimeout(() => f(6), 110); // выполняется
+// setTimeout(() => f(7), 120); // проигнорирован (прошло только 400 мс от последнего вызова)
+// setTimeout(() => f(8), 220); // проигнорирован (прошло только 400 мс от последнего вызова)

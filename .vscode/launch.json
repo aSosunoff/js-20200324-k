@@ -11,7 +11,7 @@
 			"program": "${workspaceFolder}\\node_modules\\.bin\\jest",
 			"args": [
 				"--findRelatedTests",
-                "${workspaceFolder}\\module-3\\try-test-jest\\*.spec.js",
+                "${workspaceFolder}\\module-4\\sortable-table\\*.spec.js",
             ],
 			// "console": "integratedTerminal",
 			// "internalConsoleOptions": "neverOpen",

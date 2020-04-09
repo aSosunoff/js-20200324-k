@@ -7,6 +7,7 @@
     "test:all": "./node_modules/.bin/jest",
     "test2": "./node_modules/.bin/jest --findRelatedTests module-2/*.*/*.spec.js",
     "test3": "./node_modules/.bin/jest --findRelatedTests module-3/*.*/*.spec.js",
+    "test4": "./node_modules/.bin/jest --findRelatedTests module-4/sortable-table/*.spec.js",
     "test-myself": "./node_modules/.bin/jest --findRelatedTests module-3/try-test-jest/*.spec.js",
     "serve": "static-server",
     "test:all:node": "NODE_ICU_DATA=node_modules/full-icu jest",
