@@ -30,18 +30,11 @@ class SortableTableCell {
 			<div 
 				class="sortable-table__cell" 
 				data-name="${this.id}" 
-				data-sortable="${this.sortable}"
+				${this.sortable ? 'data-sortable' : ''}
 				data-order="${this.order}">
-				<span>${this.title}</span>`;
-
-		if (this.order) {
-			this.element += `
-				<span data-element="arrow" class="sortable-table__sort-arrow">
-					<span class="sort-arrow"></span>
-				</span>`;
-		}
-
-		this.element += "</div>";
+					<span>${this.title}</span>
+					${this.order ? '<span data-element="arrow" class="sortable-table__sort-arrow"><span class="sort-arrow"></span></span>' : ''}
+			</div>`;
 	}
 }
 
@@ -123,6 +116,16 @@ export default class SortableTable {
 		this.data = data;
 
 		this.render();
+		this.initEventListeners();
+	}
+
+	initEventListeners() {
+		this.subElements.header.addEventListener("click", (e) => {
+			let cellClick = e.target.closest(".sortable-table__cell");
+			if ('sortable' in cellClick.dataset) {
+				console.log(1);
+			}
+		});
 	}
 
 	render() {
