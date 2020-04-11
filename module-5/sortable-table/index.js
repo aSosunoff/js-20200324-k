@@ -4,36 +4,6 @@ function createElementFromHTML(htmlString) {
 	return div.firstElementChild;
 }
 
-/* class SortableTableCell {
-	id;
-	title;
-	sortable;
-
-	element;
-
-	constructor({ id = "", title = "", sortable = false } = {}) {
-		this.id = id;
-		this.title = title;
-		this.sortable = sortable;
-
-		this.render();
-	}
-
-	render() {
-		this.element = `
-			<div 
-				class="sortable-table__cell" 
-				data-id="${this.id}" 
-				${this.sortable ? "data-sortable" : ""}
-				data-order="">
-					<span>${this.title}</span>
-					<span data-element="arrow" class="sortable-table__sort-arrow">
-						<span class="sort-arrow"></span>
-					</span>
-			</div>`;
-	}
-} */
-
 class SortableTableRow {
 	cells;
 	data;
@@ -64,21 +34,19 @@ const curry = (fn, ...a) =>
 		? fn.apply(this, a)
 		: (...b) => curry.apply(this, [fn, ...a, ...b]);
 
-const mapSort = new Map()
-	.set("number", (direction, a, b) => direction * (a - b))
-	.set(
-		"string",
-		(direction, a, b) => direction * new Intl.Collator().compare(a, b)
-	);
+const sortStrategy = {
+	number: (direction, a, b) => direction * (a - b),
+	string: (direction, a, b) => direction * new Intl.Collator().compare(a, b)
+};
 
 const getSort = (type, order, a, b) => {
 	const direction = "asc" === order || !order ? 1 : -1;
 
-	if (mapSort.has(type)) {
-		return mapSort.get(type)(direction, a, b);
+	if (type in sortStrategy) {
+		return sortStrategy[type](direction, a, b);
 	}
 
-	return mapSort.get([...mapSort.keys()][0])(direction, a, b);
+	return sortStrategy[Object.keys[sortStrategy][0]](direction, a, b);
 };
 
 export default class SortableTable {
@@ -189,6 +157,12 @@ export default class SortableTable {
 
 		this.data = this.data.sort((a, b) => getSortTypeOrder(a[field], b[field]));
 
+		this.subElements.body.innerHTML = this.getBodyRow();
+
+		this.updateSortArrow(field, order);
+	}
+
+	updateSortArrow(field, order){
 		const columnSort = this.subElements.header.querySelector(
 			"[data-order='asc'], [data-order='desc']"
 		);
@@ -200,8 +174,6 @@ export default class SortableTable {
 		this.subElements.header.querySelector(
 			`[data-id='${field}']`
 		).dataset.order = order === "asc" || !order ? "desc" : "asc";
-
-		this.subElements.body.innerHTML = this.getBodyRow();
 	}
 
 	remove() {
