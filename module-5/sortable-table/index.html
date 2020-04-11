@@ -47,6 +47,18 @@
 				sortable: true,
 				sortType: "number",
 			},
+			{
+				id: "status",
+				title: "Статус",
+				sortable: (order, a, b) => (order === 'asc' ? -1 : 1) * (a - b),
+				template: (data) => {
+					return `
+					<div class="sortable-table__cell">
+						${data == 1 ? 'В наличии' : 'Отсутствует'}
+					</div>
+					`;
+				},
+			}
 		];
 
 		const sortableTable = new SortableTable(header, { data });

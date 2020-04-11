@@ -85,7 +85,6 @@ export default class SortableTable {
 	element;
 	subElements = {};
 	headersConfig = [];
-	sorted = {};
 	data = [];
 
 	constructor(
@@ -100,10 +99,10 @@ export default class SortableTable {
 	) {
 		this.headersConfig = headersConfig;
 		this.data = data;
-		this.sorted = sorted;
 
 		this.render();
 		this.initEventListeners();
+		this.sort(sorted.id, sorted.order);
 	}
 
 	sortableCellHandler = (e) => {
@@ -135,7 +134,7 @@ export default class SortableTable {
 	getHeader() {
 		return `
 			<div data-elem="header" class="sortable-table__header sortable-table__row">
-				${this.headersConfig.map(this.getHeaderCell.bind(this)).join("")}
+				${this.headersConfig.map(this.getHeaderCell).join("")}
 			</div>`;
 	}
 
@@ -145,7 +144,7 @@ export default class SortableTable {
 				class="sortable-table__cell" 
 				data-id="${id}" 
 				${sortable ? "data-sortable" : ""}
-				data-order="${this.sorted.id == id ? this.sorted.order : ''}">
+				data-order="">
 					<span>${title}</span>
 					<span data-element="arrow" class="sortable-table__sort-arrow">
 						<span class="sort-arrow"></span>
@@ -179,10 +178,14 @@ export default class SortableTable {
 		</div>`;
 	}
 
-	sort(field, order = "asc") {
-		const { sortType } = this.headersConfig.find((e) => e.id === field);
-
-		let getSortTypeOrder = curry(getSort, sortType, order);
+	sort(field, order) {
+		order = order || 'asc'
+		
+		const { sortType, sortable } = this.headersConfig.find((e) => e.id === field);
+		debugger;
+		let getSortTypeOrder = typeof sortable !== "function" 
+			? curry(getSort, sortType, order) 
+			: curry(sortable, order);
 
 		this.data = this.data.sort((a, b) => getSortTypeOrder(a[field], b[field]));
 
@@ -191,7 +194,7 @@ export default class SortableTable {
 		);
 
 		if (columnSort) {
-			columnSort.dataset.order = null;
+			columnSort.dataset.order = '';
 		}
 
 		this.subElements.header.querySelector(
