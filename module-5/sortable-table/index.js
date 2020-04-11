@@ -105,19 +105,22 @@ export default class SortableTable {
 		this.initEventListeners();
 	}
 
+	sortableCell = (e) => {
+		let cellClick = e.target.closest(".sortable-table__cell");
+		if ("sortable" in cellClick.dataset) {
+			const {
+				dataset: { id, order },
+			} = cellClick;
+
+			this.sort(id, order);
+		}
+	};
+
 	initEventListeners() {
-		this.subElements.header.addEventListener("click", (e) => {
-			let cellClick = e.target.closest(".sortable-table__cell");
-			if ("sortable" in cellClick.dataset) {
-				const {
-					dataset: { order },
-				} = cellClick;
-
-				this.sort(cellClick.dataset.id, order);
-
-				cellClick.dataset.order = order === "asc" || !order ? "desc" : "asc";
-			}
-		});
+		this.subElements.header.addEventListener("click", this.sortableCell);
+	}
+	removeEventListeners() {
+		this.subElements.header.removeEventListener("click", this.sortableCell);
 	}
 
 	render() {
@@ -176,6 +179,10 @@ export default class SortableTable {
 			columnSort.dataset.order = null;
 		}
 
+		this.subElements.header.querySelector(
+			`[data-id='${field}']`
+		).dataset.order = order === "asc" || !order ? "desc" : "asc";
+
 		this.subElements.body.innerHTML = this.getBodyRow();
 	}
 
@@ -186,5 +193,6 @@ export default class SortableTable {
 	destroy() {
 		this.remove();
 		this.subElements = {};
+		this.removeEventListeners();
 	}
 }
