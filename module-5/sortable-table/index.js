@@ -24,7 +24,7 @@ class SortableTableCell {
 			<div 
 				class="sortable-table__cell" 
 				data-id="${this.id}" 
-				${this.sortable ? 'data-sortable' : '' }
+				${this.sortable ? "data-sortable" : ""}
 				data-order="">
 					<span>${this.title}</span>
 					<span data-element="arrow" class="sortable-table__sort-arrow">
@@ -39,16 +39,13 @@ class SortableTableRow {
 	data;
 	element;
 
-	constructor(
-		cells,
-		data
-	) {
+	constructor(cells, data) {
 		this.cells = cells;
 		this.data = data;
 		this.render();
 	}
 
-	template(data){
+	template(data) {
 		return `<div class="sortable-table__cell">${data}</div>`;
 	}
 
@@ -56,7 +53,7 @@ class SortableTableRow {
 		this.element = `
 			<div data-href="/products/${this.id}" class="sortable-table__row">
 				${this.cells
-					.map(({id, template = this.template}) => template(this.data[id]))
+					.map(({ id, template = this.template }) => template(this.data[id]))
 					.join("")}
 			</div>`;
 	}
@@ -69,10 +66,13 @@ const curry = (fn, ...a) =>
 
 const mapSort = new Map()
 	.set("number", (direction, a, b) => direction * (a - b))
-	.set("string", (direction, a, b) => direction * new Intl.Collator().compare(a, b));
+	.set(
+		"string",
+		(direction, a, b) => direction * new Intl.Collator().compare(a, b)
+	);
 
 const getSort = (type, order, a, b) => {
-	const direction = ("asc" === order || !order ) ? 1 : -1;
+	const direction = "asc" === order || !order ? 1 : -1;
 
 	if (mapSort.has(type)) {
 		return mapSort.get(type)(direction, a, b);
@@ -109,15 +109,13 @@ export default class SortableTable {
 		this.subElements.header.addEventListener("click", (e) => {
 			let cellClick = e.target.closest(".sortable-table__cell");
 			if ("sortable" in cellClick.dataset) {
-				const { 
-					dataset: {
-						order
-					} 
+				const {
+					dataset: { order },
 				} = cellClick;
 
 				this.sort(cellClick.dataset.id, order);
 
-				cellClick.dataset.order = (order === 'asc' || !order) ? 'desc' : 'asc'
+				cellClick.dataset.order = order === "asc" || !order ? "desc" : "asc";
 			}
 		});
 	}
@@ -133,9 +131,7 @@ export default class SortableTable {
 	getHeader() {
 		return `
 			<div data-elem="header" class="sortable-table__header sortable-table__row">
-				${this.headersConfig
-					.map((e) => new SortableTableCell(e).element)
-					.join("")}
+				${this.headersConfig.map((e) => new SortableTableCell(e).element).join("")}
 			</div>`;
 	}
 
@@ -147,7 +143,10 @@ export default class SortableTable {
 	}
 
 	getBodyRow() {
-		const cells = this.headersConfig.map(({id, template}) => ({id, template}));
+		const cells = this.headersConfig.map(({ id, template }) => ({
+			id,
+			template,
+		}));
 
 		return this.data
 			.map((e) => new SortableTableRow(cells, e).element)
@@ -169,7 +168,13 @@ export default class SortableTable {
 
 		this.data = this.data.sort((a, b) => getSortTypeOrder(a[field], b[field]));
 
-		// this.subElements.header.innerHTML = this.getHeaderRow(field, order);
+		const columnSort = this.subElements.header.querySelector(
+			"[data-order='asc'], [data-order='desc']"
+		);
+
+		if (columnSort) {
+			columnSort.dataset.order = null;
+		}
 
 		this.subElements.body.innerHTML = this.getBodyRow();
 	}
@@ -183,4 +188,3 @@ export default class SortableTable {
 		this.subElements = {};
 	}
 }
-
