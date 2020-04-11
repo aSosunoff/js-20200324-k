@@ -180,9 +180,9 @@ export default class SortableTable {
 
 	sort(field, order) {
 		order = order || 'asc'
-		
+
 		const { sortType, sortable } = this.headersConfig.find((e) => e.id === field);
-		debugger;
+		
 		let getSortTypeOrder = typeof sortable !== "function" 
 			? curry(getSort, sortType, order) 
 			: curry(sortable, order);
@@ -210,7 +210,7 @@ export default class SortableTable {
 
 	destroy() {
 		this.remove();
-		this.subElements = {};
 		this.removeEventListeners();
+		this.subElements = {};
 	}
 }
