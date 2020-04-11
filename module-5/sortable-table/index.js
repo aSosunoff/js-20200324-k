@@ -9,16 +9,12 @@ class SortableTableCell {
 	title;
 	sortable;
 
-	order;
-
 	element;
 
-	constructor({ id = "", title = "", sortable = false, order = "" } = {}) {
+	constructor({ id = "", title = "", sortable = false } = {}) {
 		this.id = id;
 		this.title = title;
 		this.sortable = sortable;
-
-		this.order = order;
 
 		this.render();
 	}
@@ -27,64 +23,42 @@ class SortableTableCell {
 		this.element = `
 			<div 
 				class="sortable-table__cell" 
-				data-name="${this.id}" 
-				${this.sortable ? "data-sortable" : ""}
-				data-order="${this.order}">
+				data-id="${this.id}" 
+				${this.sortable ? 'data-sortable' : '' }
+				data-order="">
 					<span>${this.title}</span>
-					${
-						this.order
-							? '<span data-element="arrow" class="sortable-table__sort-arrow"><span class="sort-arrow"></span></span>'
-							: ""
-					}
+					<span data-element="arrow" class="sortable-table__sort-arrow">
+						<span class="sort-arrow"></span>
+					</span>
 			</div>`;
 	}
 }
 
 class SortableTableRow {
-	id;
-	title;
-	quantity;
-	price;
-	sales;
-	images;
-	headersConfig;
-
+	cells;
+	data;
 	element;
 
 	constructor(
-		headersConfig,
-		{
-			id = "",
-			title = "",
-			quantity = 0,
-			price = 0,
-			sales = 0,
-			images = [],
-		} = {}
+		cells,
+		data
 	) {
-		this.headersConfig = headersConfig;
-
-		this.id = id;
-		this.title = title;
-		this.quantity = quantity;
-		this.price = price;
-		this.sales = sales;
-		this.images = images;
-
+		this.cells = cells;
+		this.data = data;
 		this.render();
+	}
+
+	template(data){
+		return `<div class="sortable-table__cell">${data}</div>`;
 	}
 
 	render() {
 		this.element = `
-			<a href="/products/${this.id}" class="sortable-table__row">
-				${this.headersConfig
-					.map((e) =>
-						"template" in e
-							? e.template(this.images)
-							: `<div class="sortable-table__cell">${this[e.id]}</div>`
-					)
+			<div data-href="/products/${this.id}" class="sortable-table__row">
+				${this.cells
+					.map(({id, template = this.template}) => template(this.data[id]))
 					.join("")}
-			</a>`;
+			</div>`;
 	}
 }
 
@@ -94,17 +68,17 @@ const curry = (fn, ...a) =>
 		: (...b) => curry.apply(this, [fn, ...a, ...b]);
 
 const mapSort = new Map()
-	.set("number", (i, a, b) => i * (a - b))
-	.set("string", (i, a, b) => i * new Intl.Collator().compare(a, b));
+	.set("number", (direction, a, b) => direction * (a - b))
+	.set("string", (direction, a, b) => direction * new Intl.Collator().compare(a, b));
 
 const getSort = (type, order, a, b) => {
-	const i = "asc" === order ? 1 : -1;
+	const direction = ("asc" === order || !order ) ? 1 : -1;
 
 	if (mapSort.has(type)) {
-		return mapSort.get(type)(i, a, b);
+		return mapSort.get(type)(direction, a, b);
 	}
 
-	return mapSort.get([...mapSort.keys()][0])(i, a, b);
+	return mapSort.get([...mapSort.keys()][0])(direction, a, b);
 };
 
 export default class SortableTable {
@@ -135,7 +109,15 @@ export default class SortableTable {
 		this.subElements.header.addEventListener("click", (e) => {
 			let cellClick = e.target.closest(".sortable-table__cell");
 			if ("sortable" in cellClick.dataset) {
-				console.log(1);
+				const { 
+					dataset: {
+						order
+					} 
+				} = cellClick;
+
+				this.sort(cellClick.dataset.id, order);
+
+				cellClick.dataset.order = (order === 'asc' || !order) ? 'desc' : 'asc'
 			}
 		});
 	}
@@ -151,18 +133,10 @@ export default class SortableTable {
 	getHeader() {
 		return `
 			<div data-elem="header" class="sortable-table__header sortable-table__row">
-				${this.getHeaderRow()}
+				${this.headersConfig
+					.map((e) => new SortableTableCell(e).element)
+					.join("")}
 			</div>`;
-	}
-
-	getHeaderRow(field, order) {
-		return this.headersConfig
-			.map((e) =>
-				e.id === field
-					? new SortableTableCell({ ...e, order }).element
-					: new SortableTableCell(e).element
-			)
-			.join("");
 	}
 
 	getBody() {
@@ -173,8 +147,10 @@ export default class SortableTable {
 	}
 
 	getBodyRow() {
+		const cells = this.headersConfig.map(({id, template}) => ({id, template}));
+
 		return this.data
-			.map((e) => new SortableTableRow(this.headersConfig, e).element)
+			.map((e) => new SortableTableRow(cells, e).element)
 			.join("");
 	}
 
@@ -193,7 +169,7 @@ export default class SortableTable {
 
 		this.data = this.data.sort((a, b) => getSortTypeOrder(a[field], b[field]));
 
-		this.subElements.header.innerHTML = this.getHeaderRow(field, order);
+		// this.subElements.header.innerHTML = this.getHeaderRow(field, order);
 
 		this.subElements.body.innerHTML = this.getBodyRow();
 	}
