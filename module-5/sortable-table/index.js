@@ -4,7 +4,7 @@ function createElementFromHTML(htmlString) {
 	return div.firstElementChild;
 }
 
-class SortableTableCell {
+/* class SortableTableCell {
 	id;
 	title;
 	sortable;
@@ -32,7 +32,7 @@ class SortableTableCell {
 					</span>
 			</div>`;
 	}
-}
+} */
 
 class SortableTableRow {
 	cells;
@@ -85,6 +85,7 @@ export default class SortableTable {
 	element;
 	subElements = {};
 	headersConfig = [];
+	sorted = {};
 	data = [];
 
 	constructor(
@@ -105,7 +106,7 @@ export default class SortableTable {
 		this.initEventListeners();
 	}
 
-	sortableCell = (e) => {
+	sortableCellHandler = (e) => {
 		let cellClick = e.target.closest(".sortable-table__cell");
 		if ("sortable" in cellClick.dataset) {
 			const {
@@ -117,10 +118,10 @@ export default class SortableTable {
 	};
 
 	initEventListeners() {
-		this.subElements.header.addEventListener("click", this.sortableCell);
+		this.subElements.header.addEventListener("click", this.sortableCellHandler);
 	}
 	removeEventListeners() {
-		this.subElements.header.removeEventListener("click", this.sortableCell);
+		this.subElements.header.removeEventListener("click", this.sortableCellHandler);
 	}
 
 	render() {
@@ -134,7 +135,21 @@ export default class SortableTable {
 	getHeader() {
 		return `
 			<div data-elem="header" class="sortable-table__header sortable-table__row">
-				${this.headersConfig.map((e) => new SortableTableCell(e).element).join("")}
+				${this.headersConfig.map(this.getHeaderCell.bind(this)).join("")}
+			</div>`;
+	}
+
+	getHeaderCell({id, sortable, title}) {
+		return `
+			<div 
+				class="sortable-table__cell" 
+				data-id="${id}" 
+				${sortable ? "data-sortable" : ""}
+				data-order="${this.sorted.id == id ? this.sorted.order : ''}">
+					<span>${title}</span>
+					<span data-element="arrow" class="sortable-table__sort-arrow">
+						<span class="sort-arrow"></span>
+					</span>
 			</div>`;
 	}
 
