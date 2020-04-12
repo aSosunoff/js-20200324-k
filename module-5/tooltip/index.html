@@ -1,26 +1,48 @@
-<!doctype html>
-<meta charset="UTF-8">
+<!DOCTYPE html>
+<meta charset="UTF-8" />
 <title>Tooltip</title>
 
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="style.css" />
+
+<style>
+	[data-tooltip]{
+		border: 1px solid red;
+	}
+</style>
 
 <body>
-  <div data-tooltip="foo">
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi enim esse sapiente.
-    Necessitatibus praesentium similique voluptatem.
-    <div data-tooltip="bar-bar-bar">
-      Aperiam consectetur dignissimos dolores ex mollitia.
-    </div>
-    Alias aliquid animi corporis debitis, eveniet explicabo facilis hic laborum magni nisi nulla
-    numquam odio omnis quaerat quas quia, reiciendis repellat repellendus sint sit soluta suscipit
-    temporibus voluptate.
-  </div>
+	<div data-tooltip="foo">
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi enim esse
+		sapiente. Necessitatibus praesentium similique voluptatem.
+		<div data-tooltip="bar-bar-bar">
+			Aperiam consectetur dignissimos dolores ex mollitia.
+		</div>
+		Alias aliquid animi corporis debitis, eveniet explicabo facilis hic laborum
+		magni nisi nulla numquam odio omnis quaerat quas quia, reiciendis repellat
+		repellendus sint sit soluta suscipit temporibus voluptate.
+	</div>
 
-  <script type="module">
-    import tooltip from "./index.js";
+	<div data-tooltip="test <strong>qweqwe</strong>">
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi enim esse
+		sapiente. Necessitatibus praesentium similique voluptatem.
+		Alias aliquid animi corporis debitis, eveniet explicabo facilis hic laborum
+		magni nisi nulla numquam odio omnis quaerat quas quia, reiciendis repellat
+		repellendus sint sit soluta suscipit temporibus voluptate.
+	</div>
 
-    tooltip.initialize();
-  </script>
+	<div>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi enim esse
+		sapiente. Necessitatibus praesentium similique voluptatem.
+		Alias aliquid animi corporis debitis, eveniet explicabo facilis hic laborum
+		magni nisi nulla numquam odio omnis quaerat quas quia, reiciendis repellat
+		repellendus sint sit soluta suscipit temporibus voluptate.
+	</div>
+
+	<script type="module">
+		import tooltip from "./index.js";
+
+		tooltip.initialize();
+
+		window.tooltip = tooltip;
+	</script>
 </body>
-
-
