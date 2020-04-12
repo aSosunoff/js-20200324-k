@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+<head>
+	<link rel="stylesheet" type="text/css" href="./notification/style.css" />
+
+	<style>
+		.container {
+			position: fixed;
+			bottom: 0;
+			right: 0;
+			margin: 10px;
+		}
+	</style>
+</head>
+
+<button id="btn1">Show manager message!</button>
+
+<button id="btn2">Show simple message!</button>
+
+<div class="container"></div>
+
+<script type="module">
+	import NotificationMessage from "./notification/notification.js";
+
+	import NotificationManager from "./notification-manager.js";
+
+	const notificationManager = new NotificationManager(
+		document.querySelector(".container")
+	);
+
+	window.NotificationManager = NotificationManager;
+	window.notificationManager = notificationManager;
+
+	btn1.addEventListener("click", () => {
+		notificationManager.show("hello world", {
+			duration: Math.floor(Math.random() * Math.floor(3) + 1) * 1000,
+			type: "success",
+		});
+	});
+
+	btn2.addEventListener("click", () => {
+		const notification = new NotificationMessage("hello world", {
+			duration: Math.floor(Math.random() * Math.floor(3) + 1) * 1000,
+			type: "success",
+		});
+
+		notification.show();
+	});
+</script>
