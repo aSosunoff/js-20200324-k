@@ -28,6 +28,7 @@ class Tooltip {
 		if (!spaceTooltip) return;
 		this.showTooltip(spaceTooltip.dataset.tooltip);
 		document.addEventListener("pointermove", this.onPointerMove);
+		document.addEventListener("pointerout", this.onPointerOut);
 	}
 
 	onPointerOut(e) {
@@ -35,6 +36,7 @@ class Tooltip {
 		this.element.remove();
 		this.element = null;
 		document.removeEventListener("pointermove", this.onPointerMove);
+		document.removeEventListener("pointerout", this.onPointerOut);
 	}
 
 	onPointerMove(e) {
@@ -55,7 +57,6 @@ class Tooltip {
 
 	initEventListeners() {
 		document.addEventListener("pointerover", this.onPointerOver);
-		document.addEventListener("pointerout", this.onPointerOut);
 	}
 
 	initialize({ className = 'tooltip', tag = 'div' } = {}) {
@@ -77,7 +78,6 @@ class Tooltip {
 			this.element = null;
 		};
 		document.removeEventListener("pointerover", this.onPointerOver);
-		document.removeEventListener("pointerout", this.onPointerOut);
 	}
 }
 
