@@ -21,13 +21,18 @@
 
 <button id="btnInfo">info</button>
 
-
-
 <div class="container"></div>
 
 <script type="module">
-	const getRandomDuration = () => Math.floor(Math.random() * Math.floor(3) + 1) * 1000;
-	const getRandomType = () => ['success', 'error', 'info'][Math.floor(Math.random() * Math.floor(3))];
+	const random = ({ min = 1, max = 10, step = 1 } = {}) => {
+		return (
+			Math.floor(
+				Math.random() * Math.floor(Math.max(min, max)) + Math.min(min, max)
+			) * step
+		);
+	};
+
+	const getRandomDuration = () => random({ min: 1, max: 3, step: 1000 });
 
 	import { NotificationMessage } from "./notification.js";
 	import { NotificationSuccess } from "./notification-success.js";
@@ -35,8 +40,11 @@
 	import { NotificationInfo } from "./notification-info.js";
 
 	btnSimple.addEventListener("click", () => {
+		const getRandomType = () =>
+			["success", "error", "info"][random({ min: 1, max: 3 })];
+
 		const type = getRandomType();
-		const notification = new NotificationMessage('title', type, {
+		const notification = new NotificationMessage("title", type, {
 			duration: getRandomDuration(),
 			type,
 		});
@@ -44,7 +52,7 @@
 	});
 
 	btnSuccess.addEventListener("click", () => {
-		const notification = new NotificationSuccess('title', 'success', {
+		const notification = new NotificationSuccess("title", "success", {
 			duration: getRandomDuration(),
 			isClose: true,
 		});
@@ -52,19 +60,18 @@
 	});
 
 	btnError.addEventListener("click", () => {
-		const notification = new NotificationError('title', 'error', {
+		const notification = new NotificationError("title", "error", {
 			duration: getRandomDuration(),
 		});
 		notification.show();
 	});
 
 	btnInfo.addEventListener("click", () => {
-		const notification = new NotificationInfo('title', 'info', {
+		const notification = new NotificationInfo("title", "info", {
 			duration: getRandomDuration(),
 		});
 		notification.show();
 	});
-
 
 	/* import NotificationManager from "./notification-manager.js";
 

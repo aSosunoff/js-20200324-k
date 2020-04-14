@@ -13,18 +13,20 @@ export class NotificationMessage {
 	isClose;
 	timer = null;
 	get template() {
-		return `<div class="notification 
-		${this.type} 
-		${!this.isClose ? "notification-fade-out" : ""}" 
-		style="--value: ${this.duration}ms;">
+		return `
+		<div 
+			class="notification 
+			${this.type} 
+			${!this.isClose ? "notification-fade-out" : ""}" 
+			style="--value: ${this.duration}ms;">
 			${!this.isClose ? '<div class="timer"></div>' : ""}
-			<div class="inner-wrapper">
-				<div class="notification-header">
-					${this.title}
-					${this.isClose ? '<span class="close">×</span>' : ""}
+				<div class="inner-wrapper">
+					<div class="notification-header">
+						${this.title}
+						${this.isClose ? '<span class="close">×</span>' : ""}
+					</div>
+					<div class="notification-body">${this.message}</div>
 				</div>
-				<div class="notification-body">${this.message}</div>
-			</div>
 		</div>`;
 	}
 
@@ -38,27 +40,44 @@ export class NotificationMessage {
 		this.type = type;
 		this.message = message;
 		this.isClose = isClose;
-		this.render();
-		// this.initEventListeners();
+		this.element = createElementFromHTML(this.template);
+		this.initEventListeners();
+	}
+
+	onClickRemove = (e) => {
+		if (!e.target.closest(".close")) {
+			return;
+		}
+
+		this.remove();
+	}
+
+	initEventListeners() {
+		if (this.isClose) {
+			this.element.addEventListener("click", this.onClickRemove);
+		}
+	}
+
+	destroyEventListeners() {
+		this.element.removeEventListener("click", this.onClickRemove);
 	}
 
 	show({ target = document.body, callbackAfterRemove = () => {} } = {}) {
 		target.append(this.element);
 
+		if (this.isClose) {
+			return;
+		}
+
 		clearTimeout(this.timer);
 
 		this.timer = setTimeout(() => {
-			if (!this.isClose) {
-				this.remove();
-			}
+			this.remove();
+
 			if (typeof callbackAfterRemove === "function") {
 				callbackAfterRemove(this);
 			}
 		}, this.duration);
-	}
-
-	render() {
-		this.element = createElementFromHTML(this.template);
 	}
 
 	remove() {
@@ -69,5 +88,6 @@ export class NotificationMessage {
 
 	destroy() {
 		this.remove();
+		this.destroyEventListeners();
 	}
 }
