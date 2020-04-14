@@ -1,4 +1,4 @@
-import NotificationMessage from './notification/notification.js';
+import { NotificationMessage } from './notification.js';
 
 export default class NotificationManager {
 	element;

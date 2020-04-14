@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset="UTF-8" />
 <head>
-	<link rel="stylesheet" type="text/css" href="./notification/style.css" />
+	<link rel="stylesheet" type="text/css" href="./style.css" />
 
 	<style>
 		.container {
@@ -13,16 +13,60 @@
 	</style>
 </head>
 
-<button id="btn1">Show manager message!</button>
+<button id="btnSimple">simple</button>
 
-<button id="btn2">Show simple message!</button>
+<button id="btnSuccess">success</button>
+
+<button id="btnError">error</button>
+
+<button id="btnInfo">info</button>
+
+
 
 <div class="container"></div>
 
 <script type="module">
-	import NotificationMessage from "./notification/notification.js";
+	const getRandomDuration = () => Math.floor(Math.random() * Math.floor(3) + 1) * 1000;
+	const getRandomType = () => ['success', 'error', 'info'][Math.floor(Math.random() * Math.floor(3))];
 
-	import NotificationManager from "./notification-manager.js";
+	import { NotificationMessage } from "./notification.js";
+	import { NotificationSuccess } from "./notification-success.js";
+	import { NotificationError } from "./notification-error.js";
+	import { NotificationInfo } from "./notification-info.js";
+
+	btnSimple.addEventListener("click", () => {
+		const type = getRandomType();
+		const notification = new NotificationMessage('title', type, {
+			duration: getRandomDuration(),
+			type,
+		});
+		notification.show();
+	});
+
+	btnSuccess.addEventListener("click", () => {
+		const notification = new NotificationSuccess('title', 'success', {
+			duration: getRandomDuration(),
+			isClose: true,
+		});
+		notification.show();
+	});
+
+	btnError.addEventListener("click", () => {
+		const notification = new NotificationError('title', 'error', {
+			duration: getRandomDuration(),
+		});
+		notification.show();
+	});
+
+	btnInfo.addEventListener("click", () => {
+		const notification = new NotificationInfo('title', 'info', {
+			duration: getRandomDuration(),
+		});
+		notification.show();
+	});
+
+
+	/* import NotificationManager from "./notification-manager.js";
 
 	const notificationManager = new NotificationManager(
 		document.querySelector(".container")
@@ -38,12 +82,5 @@
 		});
 	});
 
-	btn2.addEventListener("click", () => {
-		const notification = new NotificationMessage("hello world", {
-			duration: Math.floor(Math.random() * Math.floor(3) + 1) * 1000,
-			type: "success",
-		});
-
-		notification.show();
-	});
+	*/
 </script>

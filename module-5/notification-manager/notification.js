@@ -4,32 +4,40 @@ function createElementFromHTML(htmlString) {
 	return div.firstElementChild;
 }
 
-export default class NotificationMessage {
+export class NotificationMessage {
 	element;
 	duration;
 	type;
 	message;
+	title;
+	isClose;
 	timer = null;
 	get template() {
-		return `<div class="notification ${this.type}" style="--value: ${
-			this.duration / 1000
-		}s;">
-			<div class="timer"></div>
+		return `<div class="notification 
+		${this.type} 
+		${!this.isClose ? "notification-fade-out" : ""}" 
+		style="--value: ${this.duration}ms;">
+			${!this.isClose ? '<div class="timer"></div>' : ""}
 			<div class="inner-wrapper">
-				<div class="notification-header">${this.type}</div>
+				<div class="notification-header">
+					${this.title}
+					${this.isClose ? '<span class="close">×</span>' : ""}
+				</div>
 				<div class="notification-body">${this.message}</div>
 			</div>
 		</div>`;
 	}
-	// static activeNotice = null;
 
-	constructor(message, { duration = 1000, type = "success" } = {}) {
-		// NotificationMessage.activeNotice &&
-		// 	NotificationMessage.activeNotice.remove();
-
+	constructor(
+		title,
+		message,
+		{ duration = 1000, type = "success", isClose = false } = {}
+	) {
+		this.title = title;
 		this.duration = duration;
 		this.type = type;
 		this.message = message;
+		this.isClose = isClose;
 		this.render();
 		// this.initEventListeners();
 	}
@@ -40,18 +48,17 @@ export default class NotificationMessage {
 		clearTimeout(this.timer);
 
 		this.timer = setTimeout(() => {
-			this.remove();
+			if (!this.isClose) {
+				this.remove();
+			}
 			if (typeof callbackAfterRemove === "function") {
 				callbackAfterRemove(this);
 			}
 		}, this.duration);
 	}
 
-	// initEventListeners() {}
-
 	render() {
 		this.element = createElementFromHTML(this.template);
-		// NotificationMessage.activeNotice = this;
 	}
 
 	remove() {
@@ -62,6 +69,5 @@ export default class NotificationMessage {
 
 	destroy() {
 		this.remove();
-		// NotificationMessage.activeNotice = null;
 	}
 }
