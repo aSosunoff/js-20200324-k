@@ -101,7 +101,7 @@
 			})
 		},
 		{
-			nameMethod: "SUCCESS_NAME_METHOD",
+			nameMethod: "CustomNameMethod",
 			defaultSetting: new NotificationSuccess("titleDefault", "successDefault", {
 				duration: 1000,
 				isClose: true,
@@ -123,7 +123,7 @@
 	window.notification = notification;
 
 	btnManagerSuccessMethodName.addEventListener("click", () => {
-		notification.SUCCESS_NAME_METHOD("SUCCESS_NAME_METHOD", "SUCCESS_NAME_METHOD");
+		notification.CustomNameMethod("CustomNameMethod", "CustomNameMethod");
 	});
 
 	btnManagerSuccess.addEventListener("click", () => {
