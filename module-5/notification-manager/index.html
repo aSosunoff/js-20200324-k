@@ -21,9 +21,22 @@
 
 <button id="btnInfo">info</button>
 
+<button id="btnManagerSuccess">manager success</button>
+<button id="btnManagerSuccessMethodName">manager success name method</button>
+<button id="btnManagerError">manager error</button>
+<button id="btnManagerInfo">manager info</button>
+
 <div class="container"></div>
 
 <script type="module">
+	import { NotificationMessage } from "./notification.js";
+
+	import { NotificationSuccess } from "./notification-success.js";
+	import { NotificationError } from "./notification-error.js";
+	import { NotificationInfo } from "./notification-info.js";
+
+	import { NotificationManager } from "./notification-manager.js";
+
 	const random = ({ min = 1, max = 10, step = 1 } = {}) => {
 		return (
 			Math.floor(
@@ -34,11 +47,10 @@
 
 	const getRandomDuration = () => random({ min: 1, max: 3, step: 1000 });
 
-	import { NotificationMessage } from "./notification.js";
-	import { NotificationSuccess } from "./notification-success.js";
-	import { NotificationError } from "./notification-error.js";
-	import { NotificationInfo } from "./notification-info.js";
 
+	/**
+	 * NotificationMessage
+	*/
 	btnSimple.addEventListener("click", () => {
 		const getRandomType = () =>
 			["success", "error", "info"][random({ min: 1, max: 3 })];
@@ -51,6 +63,9 @@
 		notification.show();
 	});
 
+	/**
+	 * NotificationSuccess, NotificationError, NotificationInfo
+	*/
 	btnSuccess.addEventListener("click", () => {
 		const notification = new NotificationSuccess("title", "success", {
 			duration: getRandomDuration(),
@@ -73,21 +88,53 @@
 		notification.show();
 	});
 
-	/* import NotificationManager from "./notification-manager.js";
-
-	const notificationManager = new NotificationManager(
-		document.querySelector(".container")
+	/**
+	 * NotificationManager
+	*/
+	const notification = new NotificationManager(
+		{
+			target: document.querySelector(".container"),
+		},
+		{
+			defaultSetting: new NotificationSuccess("titleDefault", "successDefault", {
+				duration: getRandomDuration(),
+			})
+		},
+		{
+			nameMethod: "SUCCESS_NAME_METHOD",
+			defaultSetting: new NotificationSuccess("titleDefault", "successDefault", {
+				duration: 1000,
+				isClose: true,
+			})
+		},
+		{
+			defaultSetting: new NotificationError("titleDefault", "errorDefault", {
+				duration: getRandomDuration(),
+				isClose: true,
+			})
+		},
+		{
+			defaultSetting: new NotificationInfo("titleDefault", "infoDefault", {
+				duration: getRandomDuration(),
+			})
+		}
 	);
 
-	window.NotificationManager = NotificationManager;
-	window.notificationManager = notificationManager;
+	window.notification = notification;
 
-	btn1.addEventListener("click", () => {
-		notificationManager.show("hello world", {
-			duration: Math.floor(Math.random() * Math.floor(3) + 1) * 1000,
-			type: "success",
-		});
+	btnManagerSuccessMethodName.addEventListener("click", () => {
+		notification.SUCCESS_NAME_METHOD("SUCCESS_NAME_METHOD", "SUCCESS_NAME_METHOD");
 	});
 
-	*/
+	btnManagerSuccess.addEventListener("click", () => {
+		notification.Success("title", "success");
+	});
+
+	btnManagerError.addEventListener("click", () => {
+		notification.Error("title", "error");
+	});
+
+	btnManagerInfo.addEventListener("click", () => {
+		notification.Info("title", "info");
+	});
 </script>

@@ -1,69 +1,64 @@
 import { NotificationMessage } from './notification.js';
 
-export default class NotificationManager {
-	element;
+export class NotificationManager {
+    target;
+    stackLimit;
+    notificationsList;
 
-	constructor(target, stackLimit = 4) {
-        this.target = target || document.body;
+	constructor({ target = document.body, stackLimit = 4 } = {}, ...notifications) {
+        this.target = target;
         this.stackLimit = stackLimit;
-        this.notificationsList = new Map();
-	}
+        this.notificationsList = [];
 
-	show(message, { duration = 1000, type = "success" } = {}) {
-		/* let container = target && "append" in target ? target : document.body;
+        notifications.forEach((e) => {
+            const { 
+                nameMethod = this._getNameMethod(e.defaultSetting),
+                defaultSetting, 
+            } = e;
 
-		container.append(this.element);
-		
-		clearTimeout(this.timer);
+            if(!defaultSetting) {
+                throw new Error("You need set default instance");
+            }
 
-        this.timer = setTimeout(this.remove.bind(this), this.duration); */
-        const notification = new NotificationMessage(message, { duration, type });
+            if (!(defaultSetting instanceof NotificationMessage)) {
+                throw new Error("Notification is not extends from NotificationMessage");
+            }
 
-        const key = `f${(+new Date()).toString(16)}`;
+            const {
+                title: titleDefault,
+                message: messageDefault,
+                duration: durationDefault,
+                isClose: isCloseDefault,
+            } = defaultSetting;
 
-        notification.show({
-            target: this.target,
-			callbackAfterRemove: ((key) => {
-                return (e) => {
-                    this.removeMessageByKey(key);
+            this[nameMethod] = (
+                title = titleDefault, 
+                message = messageDefault,
+                {
+                    duration = durationDefault, 
+                    isClose = isCloseDefault 
+                } = {}) => 
+            {
+                const notification = new defaultSetting.constructor(title, message, { duration, isClose });
+                
+                notification.show(this.target);
+
+                if (this.notificationsList.length >= this.stackLimit) {
+                    this.notificationsList.shift().remove()
                 }
-            })(key)
+
+                if (!isClose) {
+                    this.notificationsList.push(notification);
+                }
+            };
         });
-
-        if (this.notificationsList.size >= this.stackLimit) {
-            this.removeOldMessage();
-        }
-
-        this.notificationsList.set(key, notification);
     }
     
-    removeMessageByKey(key) {
-        if (this.notificationsList.has(key)) {
-            this.notificationsList.get(key).remove();
-            this.notificationsList.delete(key);
-        }
+    _getNameMethod(instanceNotification) {
+        return instanceNotification.type[0].toLocaleUpperCase() + instanceNotification.type.slice(1).toLocaleLowerCase()
     }
-
-    removeOldMessage() {
-        const key = Array.from(this.notificationsList)[0][0];
-        this.removeMessageByKey(key);
-    }
-    
-	// initEventListeners() {}
-
-	render() {
-		/* this.element = createElementFromHTML(this.template);
-		NotificationMessage.activeNotice = this; */
-	}
-
-	remove() {
-		/* this.element.remove();
-		clearTimeout(this.timer);
-		this.timer = null; */
-	}
 
 	destroy() {
-		/* this.remove();
-		NotificationMessage.activeNotice = null; */
+		this.notificationsList = [];
 	}
 }

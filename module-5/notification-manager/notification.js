@@ -62,7 +62,7 @@ export class NotificationMessage {
 		this.element.removeEventListener("click", this.onClickRemove);
 	}
 
-	show({ target = document.body, callbackAfterRemove = () => {} } = {}) {
+	show(target = document.body) {
 		target.append(this.element);
 
 		if (this.isClose) {
@@ -73,10 +73,6 @@ export class NotificationMessage {
 
 		this.timer = setTimeout(() => {
 			this.remove();
-
-			if (typeof callbackAfterRemove === "function") {
-				callbackAfterRemove(this);
-			}
 		}, this.duration);
 	}
 
