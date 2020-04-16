@@ -14,6 +14,7 @@
   --grey-light: #c2cfe0;
   --grey-extra-light: #eff1f4;
   --grey-skeleton: #f5f6f8;
+  --grey-middle: #e0e4eb;
   --white: #ffffff;
 }
 
@@ -27,7 +28,7 @@
 
 .sortable-table__row {
   display: grid;
-  grid: auto-flow / 120px calc(40% - 120px) 20% 15% 15% 10%;
+  grid: auto-flow / 80px calc(50% - 80px) 20% 15% 15%;
   text-decoration: none;
 }
 .sortable-table__row.bold {
@@ -75,7 +76,7 @@
   cursor: pointer;
 }
 
-.sortable-table__cell[data-order='desc'] .sort-arrow {
+.sortable-table__cell[data-order='asc'] .sort-arrow {
   width: 0;
   height: 0;
   border-left: 4px solid transparent;
@@ -83,7 +84,7 @@
   border-bottom: 4px solid var(--grey-light);
 }
 
-.sortable-table__cell[data-order='asc'] .sort-arrow {
+.sortable-table__cell[data-order='desc'] .sort-arrow {
   width: 0;
   height: 0;
   border-left: 4px solid transparent;
@@ -95,20 +96,12 @@
   grid-template-columns: auto;
 }
 
-.sortable-table__loading-line {
-  grid-column: 1 / 7;
-  display: none;
-  margin: 16px;
-  --loading-line-height: 20px;
-}
+
 
 .sortable-table__body .sortable-table__row:hover {
   background-color: var(--grey-skeleton);
 }
 
-.sortable-table.sortable-table_loading .sortable-table__loading-line {
-  display: grid;
-}
 
 .sortable-table_empty {
   display: flex;
@@ -152,4 +145,48 @@
 
 .sortable-field-tooltip__subcategory {
   color: var(--dark-blue);
+}
+
+.sortable-table.sortable-table_loading .sortable-table__body {
+  display: none;
+}
+
+.sortable-table.sortable-table_loading .sortable-table__loading-line {
+  display: grid;
+}
+
+/* Loading line */
+
+.sortable-table__loading-line {
+  grid-column: 1 / 7;
+  display: none;
+  margin: 16px;
+  --loading-line-height: 20px;
+}
+
+.loading-line {
+  animation-duration: 1.5s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: backgroundMovement;
+  animation-timing-function: linear;
+  background: var(--grey-skeleton);
+  background: linear-gradient(
+    267.58deg,
+    var(--grey-middle) 0%,
+    var(--grey-skeleton) 80%,
+    var(--grey-middle) 100%
+  );
+  background-size: 200%;
+  border-radius: 2px;
+  height: var(--loading-line-height);
+}
+
+@keyframes backgroundMovement {
+  0% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: -100%;
+  }
 }
