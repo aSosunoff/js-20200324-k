@@ -17,16 +17,16 @@
 				sortable: false,
 				template: (data) => {
 					return `
-          <div class="sortable-table__cell">
-            <img class="sortable-table-image" alt="Image" src="${data[0].url}">
-          </div>
-        `;
+						<div class="sortable-table__cell">
+							${data.length ? `<img class="sortable-table-image" alt="Image" src="${data[0].url}">` : ''}
+						</div>
+						`;
 				},
 			},
 			{
 				id: "title",
 				title: "Наименование",
-				sortable: true,
+				sortable: false,
 				sortType: "string",
 			},
 			{
@@ -42,10 +42,17 @@
 				sortType: "number",
 			},
 			{
-				id: "sales",
-				title: "Sales",
+				id: "rating",
+				title: "Райтинг",
 				sortable: true,
 				sortType: "number",
+				template: (data) => {
+					return `
+					<div class="sortable-table__cell">
+						${data ? data : ''}
+					</div>
+					`;
+				},
 			},
 			{
 				id: "status",
@@ -61,7 +68,11 @@
 			}
 		];
 
-		const sortableTable = new SortableTable(header, { data });
+		// const sortableTable = new SortableTable(header, { data });
+
+		const sortableTable = new SortableTable(header, { url: 'api/rest/products' });
+
+		// https://course-js.javascript.ru/api/rest/products?_embed=subcategory.category&_sort=title&_order=asc&_start=0&_end=30
 
 		window.sortableTable = sortableTable;
 

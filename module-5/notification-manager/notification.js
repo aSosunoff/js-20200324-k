@@ -87,3 +87,23 @@ export class NotificationMessage {
 		this.destroyEventListeners();
 	}
 }
+
+
+export class NotificationSuccess extends NotificationMessage {
+	constructor(title = "" , message = "", { duration, isClose } = {}) {
+		super(title, message, { duration, isClose, type: "success" });
+	}
+}
+
+export class NotificationInfo extends NotificationMessage {
+	constructor(title = "" , message = "", { duration, isClose } = {}) {
+		super(title, message, { duration, isClose, type: "info" });
+	}
+}
+
+export class NotificationError extends NotificationMessage {
+	constructor(title = "" , message = "", { duration, isClose } = {}) {
+
+		super(title, message, { duration, isClose, type: "error" });
+	}
+}

@@ -1,3 +1,7 @@
+import fetchJson from "../../utils/fetch-json.js";
+
+const BACKEND_URL = "https://course-js.javascript.ru";
+
 function createElementFromHTML(htmlString) {
 	var div = document.createElement("div");
 	div.innerHTML = htmlString.trim();
@@ -36,7 +40,7 @@ const curry = (fn, ...a) =>
 
 const sortStrategy = {
 	number: (direction, a, b) => direction * (a - b),
-	string: (direction, a, b) => direction * new Intl.Collator().compare(a, b)
+	string: (direction, a, b) => direction * new Intl.Collator().compare(a, b),
 };
 
 const getSort = (type, order, a, b) => {
@@ -54,6 +58,7 @@ export default class SortableTable {
 	subElements = {};
 	headersConfig = [];
 	data = [];
+	url = '';
 
 	constructor(
 		headersConfig,
@@ -63,14 +68,22 @@ export default class SortableTable {
 				id: headersConfig.find((item) => item.sortable).id,
 				order: "asc",
 			},
+			url = "",
 		} = {}
 	) {
 		this.headersConfig = headersConfig;
 		this.data = data;
+		this.url = url.trim() ? new URL(url.trim(), BACKEND_URL) : url;
+		
+		this.render(sorted.id, sorted.order);
+	}
 
-		this.render();
-		this.initEventListeners();
-		this.sort(sorted.id, sorted.order);
+	loadingToggle() {
+		this.element.classList.toggle("sortable-table_loading");
+	}
+
+	emptyDataToggle() {
+		this.element.classList.toggle("sortable-table_empty");
 	}
 
 	sortableCellHandler = (e) => {
@@ -80,7 +93,7 @@ export default class SortableTable {
 				dataset: { id, order },
 			} = cellClick;
 
-			this.sort(id, order);
+			this.sort(id, order === "asc" ? "desc" : "asc");
 		}
 	};
 
@@ -91,22 +104,52 @@ export default class SortableTable {
 		this.subElements.header.removeEventListener("click", this.sortableCellHandler);
 	}
 
-	render() {
+	render(id, order) {
 		this.element = createElementFromHTML(this.getTable());
+		
 		this.subElements = [...this.element.querySelectorAll("[data-elem]")].reduce(
 			(res, e) => ((res[e.dataset.elem] = e), res),
 			{}
 		);
+
+		this._setGetDataMethod();
+
+		(async () => {
+			await this.sort(id, order);
+
+			this.initEventListeners();
+		})();
 	}
 
-	getHeader() {
-		return `
-			<div data-elem="header" class="sortable-table__header sortable-table__row">
-				${this.headersConfig.map(this.getHeaderCell).join("")}
-			</div>`;
+	_setGetDataMethod() {
+		if (this.url) {
+			this._getData = async (id, order) => {
+				const data = await fetchJson(`${this.url.href}?
+					_embed=subcategory.category
+					&_sort=${id}
+					&_order=${order}
+					&_start=0
+					&_end=30`);
+
+				return data;
+			}
+		} else {
+			this._getData = async (id, order) => {
+				const { sortType, sortable } = this.headersConfig.find(
+					(e) => e.id === id
+				);
+		
+				let getSortTypeOrder =
+					typeof sortable !== "function"
+						? curry(getSort, sortType, order)
+						: curry(sortable, order);
+		
+				return this.data.sort((a, b) => getSortTypeOrder(a[id], b[id]));
+			};
+		}
 	}
 
-	getHeaderCell({id, sortable, title}) {
+	getHeaderCell({ id, sortable, title }) {
 		return `
 			<div 
 				class="sortable-table__cell" 
@@ -117,13 +160,6 @@ export default class SortableTable {
 					<span data-element="arrow" class="sortable-table__sort-arrow">
 						<span class="sort-arrow"></span>
 					</span>
-			</div>`;
-	}
-
-	getBody() {
-		return `
-			<div data-elem="body" class="sortable-table__body">
-				${this.getBodyRow()}
 			</div>`;
 	}
 
@@ -141,39 +177,59 @@ export default class SortableTable {
 	getTable() {
 		return `
 		<div class="sortable-table">
-			${this.getHeader()}
-			${this.getBody()}
+			<div data-elem="header" class="sortable-table__header sortable-table__row">
+				${this.headersConfig.map(this.getHeaderCell).join("")}
+			</div>
+			
+			<div data-elem="body" class="sortable-table__body">
+				${this.getBodyRow()}
+			</div>
+			
+			<div data-elem="loading" class="loading-line sortable-table__loading-line"></div>
+			
+			<div data-elem="emptyPlaceholder" class="sortable-table__empty-placeholder">
+				<div>
+					<p>No products satisfies your filter criteria</p>
+					<button type="button" class="button-primary-outline">Reset all filters</button>
+				</div>
+			</div>
 		</div>`;
 	}
 
-	sort(field, order) {
-		order = order || 'asc'
-
-		const { sortType, sortable } = this.headersConfig.find((e) => e.id === field);
-		
-		let getSortTypeOrder = typeof sortable !== "function" 
-			? curry(getSort, sortType, order) 
-			: curry(sortable, order);
-
-		this.data = this.data.sort((a, b) => getSortTypeOrder(a[field], b[field]));
-
+	_refreshRow() {
 		this.subElements.body.innerHTML = this.getBodyRow();
-
-		this.updateSortArrow(field, order);
 	}
 
-	updateSortArrow(field, order){
+	async sort(id, order) {
+		order = order || "asc";
+
+		this.updateSortArrow(id, order);
+
+		this.loadingToggle();
+
+		this.data = await this._getData(id, order);
+
+		this.loadingToggle();
+
+		if (this.data.length) {
+			this._refreshRow();
+		} else {
+			this.emptyDataToggle();
+		}
+	}
+
+	updateSortArrow(id, order) {
 		const columnSort = this.subElements.header.querySelector(
 			"[data-order='asc'], [data-order='desc']"
 		);
 
 		if (columnSort) {
-			columnSort.dataset.order = '';
+			columnSort.dataset.order = "";
 		}
-
+		
 		this.subElements.header.querySelector(
-			`[data-id='${field}']`
-		).dataset.order = order === "asc" || !order ? "desc" : "asc";
+			`[data-id='${id}']`
+		).dataset.order = order;
 	}
 
 	remove() {
