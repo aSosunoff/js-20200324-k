@@ -28,7 +28,7 @@
 
 .sortable-table__row {
   display: grid;
-  grid: auto-flow / 120px calc(40% - 120px) 20% 15% 15% 10%;
+  grid: auto-flow / 120px calc(50% - 120px) 20% 15% 15%;
   text-decoration: none;
 }
 .sortable-table__row.bold {
@@ -58,7 +58,7 @@
   border-top: none;
 }
 
-.sortable-table__header .sortable-table__cell[data-sortable] {
+.sortable-table__header .sortable-table__cell[data-sortable="true"] {
   cursor: pointer;
 }
 
