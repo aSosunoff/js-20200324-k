@@ -7,8 +7,6 @@ function createElementFromHTML(htmlString) {
 export default class RangePicker {
 	element;
 	subElements = {};
-	// TODO: rename "selectingFrom"
-	selectingFrom = true;
 	selected = {
 		from: new Date(),
 		to: new Date(),
@@ -39,12 +37,92 @@ export default class RangePicker {
 		);
 	}
 
+	get template() {
+		return `
+		<div class="rangepicker">
+			<div class="rangepicker__input" data-elem="input">
+				<span data-elem="from"></span>
+				-
+				<span data-elem="to"></span>
+			</div>
+			<div class="rangepicker__selector" data-elem="selector"></div>
+		</div>`;
+	}
+
 	constructor({ from = new Date(), to = new Date() } = {}) {
 		this.showDateFrom = new Date(from);
 		this.selected = { from, to };
 
 		this.render();
-		this.element.addEventListener("click", this.onPickerOpen, true);
+	}
+
+	toggle() {
+		const isOpen = this.element.classList.contains("rangepicker_open");
+
+		if (!isOpen) {
+			this.open()
+		} else {
+			this.close();
+		}
+	}
+
+	open(){
+		this.element.classList.add("rangepicker_open");
+
+		this.renderSelector();
+		this.renderHighlight();
+		this.initEventListeners();
+	}
+
+	close(){
+		this.element.classList.remove("rangepicker_open");
+
+		if (!this.selected.to) {
+			this.setDay(this.selected.from);
+		}
+
+		this.removeEventListeners();
+	}
+
+	next() {
+		this.showDateFrom = RangePicker.nextMonth(this.showDateFrom);
+		this.renderSelector();
+		this.renderHighlight();
+	}
+
+	prev() {
+		this.showDateFrom = RangePicker.prevMonth(this.showDateFrom);
+		this.renderSelector();
+		this.renderHighlight();
+	}
+
+	setDay(date) {
+		if (this.selected.to) {
+			this.selected = {
+				from: date,
+				to: null,
+			};
+		} else {
+			const current = date.getTime();
+			this.selected.to = new Date(
+				Math.max(current, this.selected.from.getTime())
+			);
+			this.selected.from = new Date(
+				Math.min(current, this.selected.from.getTime())
+			);
+			this.renderFromToDate();
+			this.dispatchEvent();
+		}
+
+		this.renderSelector();
+		this.renderHighlight();
+	}
+
+	dispatchEvent() {
+		this.element.dispatchEvent(new CustomEvent("date-range-selected", {
+			detail: this.selected,
+			bubbles: true,
+		}));
 	}
 
 	renderSelector() {
@@ -143,119 +221,11 @@ export default class RangePicker {
 		);
 	}
 
-	get template() {
-		return `
-		<div class="rangepicker">
-			<div class="rangepicker__input" data-elem="input">
-				<span data-elem="from"></span>
-				-
-				<span data-elem="to"></span>
-			</div>
-			<div class="rangepicker__selector" data-elem="selector"></div>
-		</div>`;
-	}
-
 	render() {
 		this.element = createElementFromHTML(this.template);
 		this.subElements = RangePicker.getSubElements(this.element);
 		this.renderFromToDate();
-	}
-
-	onPickerOpen = (e) => {
-		const rangePickerInput = e.target.closest(".rangepicker__input");
-
-		if (!rangePickerInput) {
-			return;
-		}
-
-		const isOpen = this.element.classList.toggle("rangepicker_open");
-
-		if (isOpen) {
-			this.renderSelector();
-			this.renderHighlight();
-			this.initEventListeners();
-		} else {
-			this.removeEventListeners();
-		}
-	};
-
-	onControllRight = (e) => {
-		const controllRight = e.target.closest(
-			".rangepicker__selector-control-right"
-		);
-
-		if (!controllRight) {
-			return;
-		}
-
-		this.showDateFrom = RangePicker.nextMonth(this.showDateFrom);
-
-		this.renderSelector();
-		this.renderHighlight();
-	};
-
-	onControllLeft = (e) => {
-		const controllRight = e.target.closest(
-			".rangepicker__selector-control-left"
-		);
-
-		if (!controllRight) {
-			return;
-		}
-
-		this.showDateFrom = RangePicker.prevMonth(this.showDateFrom);
-
-		this.renderSelector();
-		this.renderHighlight();
-	};
-
-	onDayClick = (e) => {
-		const button = e.target.closest(".rangepicker__cell");
-
-		if (!button) {
-			return;
-		}
-
-		const { value } = button.dataset;
-
-		if (this.selected.to) {
-			this.selected = {
-				from: new Date(value),
-				to: null,
-			};
-		} else {
-			const current = new Date(value).getTime();
-			this.selected.to = new Date(
-				Math.max(current, this.selected.from.getTime())
-			);
-			this.selected.from = new Date(
-				Math.min(current, this.selected.from.getTime())
-			);
-			this.renderFromToDate();
-			this.dispatchEvent();
-		}
-
-		this.renderSelector();
-		this.renderHighlight();
-	};
-
-	onClose = (e) => {
-		const date = e.target.closest(".rangepicker");
-
-		if (date) {
-			return;
-		}
-
-		this.element.classList.remove("rangepicker_open");
-
-		this.removeEventListeners();
-	};
-
-	dispatchEvent() {
-		this.element.dispatchEvent(new CustomEvent("date-range-selected", {
-			detail: this.selected,
-			bubbles: true,
-		}));
+		this.element.addEventListener("click", this.onPickerToggle, true);
 	}
 
 	initEventListeners() {
@@ -286,6 +256,38 @@ export default class RangePicker {
 	destroy() {
 		this.remove();
 		this.removeEventListeners();
-		this.element.removeEventListener("click", this.onPickerOpen, true);
+		this.element.removeEventListener("click", this.onPickerToggle, true);
 	}
+
+	onPickerToggle = ({ target }) => {
+		if (target.closest(".rangepicker__input")) {
+			this.toggle();
+		}
+	};
+
+	onClose = ({ target }) => {
+		if (!target.closest(".rangepicker")) {
+			this.close();
+		}	
+	};
+
+	onControllRight = ({ target }) => {
+		if (target.closest(".rangepicker__selector-control-right")) {
+			this.next();
+		}
+	};
+
+	onControllLeft = ({ target }) => {
+		if (target.closest(".rangepicker__selector-control-left")) {
+			this.prev();	
+		}
+	};
+
+	onDayClick = ({ target }) => {
+		const button = target.closest(".rangepicker__cell");
+		if (button) {
+			const { value } = button.dataset;
+			this.setDay(new Date(value));
+		}
+	};
 }
