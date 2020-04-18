@@ -20,7 +20,7 @@ describe("RangePicker", () => {
   });
 
   afterEach(() => {
-    // rangePicker.destroy();
+    rangePicker.destroy();
     rangePicker = null;
   });
 
@@ -107,7 +107,7 @@ describe("RangePicker", () => {
     expect(selectedBetween.length).toEqual(0);
   });
 
-  /* it("should keep selected dates range after reopening", () => {
+  it("should keep selected dates range after reopening", () => {
     const input = rangePicker.element.querySelector('.rangepicker__input');
 
     // open date picker
@@ -125,7 +125,7 @@ describe("RangePicker", () => {
 
     expect(from.textContent.trim()).toEqual("1");
     expect(to.textContent.trim()).toEqual("3");
-  }); */
+  });
 
   it("should show correct initial months in calendar", () => {
     const input = rangePicker.element.querySelector('.rangepicker__input');
@@ -171,7 +171,7 @@ describe("RangePicker", () => {
     expect(second.textContent.trim()).toEqual("октябрь");
   });
 
-  /* it("should have ability to select all dates in two visible months", () => {
+  it("should have ability to select all dates in two visible months", () => {
       const input = rangePicker.element.querySelector('.rangepicker__input');
       const selector = rangePicker.element.querySelector('.rangepicker__selector');
 
@@ -204,7 +204,7 @@ describe("RangePicker", () => {
       // check selection after second opening
       expect(from.textContent.trim()).toEqual("1");
       expect(to.textContent.trim()).toEqual("30");
-  }); */
+  });
 
   it("should have ability to select dates range bigger than two months", () => {
       const input = rangePicker.element.querySelector('.rangepicker__input');
@@ -266,7 +266,7 @@ describe("RangePicker", () => {
       expect(dateTo).toMatch("05.11.2019");
   });
 
-  /* it("should have ability to select minimal dates range equal two days", () => {
+  it("should have ability to select minimal dates range equal two days", () => {
       const input = rangePicker.element.querySelector('.rangepicker__input');
       const selector = rangePicker.element.querySelector('.rangepicker__selector');
 
@@ -291,10 +291,10 @@ describe("RangePicker", () => {
 
       expect(dateFrom).toMatch("01.10.2019");
       expect(dateTo).toMatch("02.10.2019");
-  }); */
+  });
 
   // TODO: maybe we need fix this behaviour in DateRange component?
-  /* it("should have ability to select minimal dates range equal one day", () => {
+  it("should have ability to select minimal dates range equal one day", () => {
       const input = rangePicker.element.querySelector('.rangepicker__input');
       const selector = rangePicker.element.querySelector('.rangepicker__selector');
 
@@ -318,9 +318,9 @@ describe("RangePicker", () => {
 
       expect(dateFrom).toMatch("01.10.2019");
       expect(dateTo).toMatch("01.10.2019");
-  }); */
+  });
 
-  /* it("should have ability select more than 1 year dates range", () => {
+  it("should have ability select more than 1 year dates range", () => {
       const MONTHS_COUNT = 12;
       const input = rangePicker.element.querySelector('.rangepicker__input');
       const selector = rangePicker.element.querySelector('.rangepicker__selector');
@@ -356,5 +356,5 @@ describe("RangePicker", () => {
 
       expect(dateFrom).toMatch("01.10.2019");
       expect(dateTo).toMatch("01.11.2020");
-  }); */
+  });
 });
