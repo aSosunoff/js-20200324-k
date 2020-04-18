@@ -205,6 +205,7 @@ export default class RangePicker {
   }
 
   onRangePickerCellClick(target) {
+    console.log(1);
     const { value } = target.dataset;
 
     if (value) {

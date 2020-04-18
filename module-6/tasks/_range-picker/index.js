@@ -44,7 +44,7 @@ export default class RangePicker {
 		this.selected = { from, to };
 
 		this.render();
-		this.element.addEventListener("click", this.onPickerOpen, { capture: true });
+		this.element.addEventListener("click", this.onPickerOpen, true);
 	}
 
 	renderSelector() {
@@ -216,11 +216,15 @@ export default class RangePicker {
 			return;
 		}
 
+		const { value } = button.dataset;
+
 		if (this.selected.to) {
-			this.selected.from = new Date(button.dataset.value);
-			this.selected.to = null;
+			this.selected = {
+				from: new Date(value),
+				to: null,
+			};
 		} else {
-			const current = new Date(button.dataset.value).getTime();
+			const current = new Date(value).getTime();
 			this.selected.to = new Date(
 				Math.max(current, this.selected.from.getTime())
 			);
@@ -248,26 +252,24 @@ export default class RangePicker {
 	};
 
 	dispatchEvent() {
-		var event = new CustomEvent("date-range-selected", {
+		this.element.dispatchEvent(new CustomEvent("date-range-selected", {
 			detail: this.selected,
 			bubbles: true,
-		});
-
-		this.element.dispatchEvent(event);
+		}));
 	}
 
 	initEventListeners() {
-		this.element.addEventListener("click", this.onControllRight, { capture: true });
-		this.element.addEventListener("click", this.onControllLeft, { capture: true });
+		this.element.addEventListener("click", this.onControllRight, true);
+		this.element.addEventListener("click", this.onControllLeft, true);
 		this.element.addEventListener("click", this.onDayClick);
-		document.addEventListener("click", this.onClose, { capture: true });
+		document.addEventListener("click", this.onClose, true);
 	}
 
 	removeEventListeners() {
-		this.element.removeEventListener("click", this.onControllRight, { capture: true });
-		this.element.removeEventListener("click", this.onControllLeft, { capture: true });
+		this.element.removeEventListener("click", this.onControllRight, true);
+		this.element.removeEventListener("click", this.onControllLeft, true);
 		this.element.removeEventListener("click", this.onDayClick);
-		document.removeEventListener("click", this.onClose, { capture: true });
+		document.removeEventListener("click", this.onClose, true);
 	}
 
 	remove() {
@@ -284,6 +286,6 @@ export default class RangePicker {
 	destroy() {
 		this.remove();
 		this.removeEventListeners();
-		this.element.removeEventListener("click", this.onPickerOpen, { capture: true });
+		this.element.removeEventListener("click", this.onPickerOpen, true);
 	}
 }

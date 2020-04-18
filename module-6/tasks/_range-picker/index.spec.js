@@ -20,11 +20,11 @@ describe("RangePicker", () => {
   });
 
   afterEach(() => {
-    // rangePicker.destroy();
+    rangePicker.destroy();
     rangePicker = null;
   });
 
-  it("should initially show only input", () => {
+  /* it("should initially show only input", () => {
     const selector = rangePicker.element.querySelector('.rangepicker__selector');
     const input = rangePicker.element.querySelector('.rangepicker__input');
 
@@ -105,9 +105,9 @@ describe("RangePicker", () => {
     const selectedBetween = rangePicker.element.querySelectorAll('.rangepicker__selected-between');
 
     expect(selectedBetween.length).toEqual(0);
-  });
+  }); */
 
-  /* it("should keep selected dates range after reopening", () => {
+  it("should keep selected dates range after reopening", () => {
     const input = rangePicker.element.querySelector('.rangepicker__input');
 
     // open date picker
@@ -116,16 +116,18 @@ describe("RangePicker", () => {
     let from = rangePicker.element.querySelector('.rangepicker__selected-from');
     const prevDate = from.previousElementSibling;
     const nextDate = from.nextElementSibling;
-
+  
+    console.log('START');
     prevDate.dispatchEvent(new MouseEvent("click", {bubbles: true}));
     nextDate.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+    console.log('STOP');
 
     from = rangePicker.element.querySelector('.rangepicker__selected-from');
     const to = rangePicker.element.querySelector('.rangepicker__selected-to');
 
     expect(from.textContent.trim()).toEqual("1");
     expect(to.textContent.trim()).toEqual("3");
-  }); */
+  });
 
   it("should show correct initial months in calendar", () => {
     const input = rangePicker.element.querySelector('.rangepicker__input');

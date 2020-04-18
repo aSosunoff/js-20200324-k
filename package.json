@@ -11,6 +11,7 @@
     "test5": "./node_modules/.bin/jest --findRelatedTests module-5/*.*/*.spec.js",
     "test6:sortable": "./node_modules/.bin/jest --findRelatedTests module-6/tasks/_sortable-table/*.spec.js",
     "test6:date": "./node_modules/.bin/jest --findRelatedTests module-6/tasks/_range-picker/*.spec.js",
+    "7": "./node_modules/.bin/jest --findRelatedTests module-7/solutions/range-picker/*.spec.js",
     "serve": "static-server",
     "test:all:node": "NODE_ICU_DATA=node_modules/full-icu jest",
     "test:specific:node": "NODE_ICU_DATA=node_modules/full-icu jest --findRelatedTests",
