@@ -9,13 +9,13 @@ function createElementFromHTML(htmlString) {
 }
 
 const debounceDecorator = (f, delay = 0) => {
-    let timer = null;
-    
+	let timer = null;
+
 	return (...arg) => {
 		if (timer) {
 			clearTimeout(timer);
 			timer = null;
-		};		
+		}
 
 		timer = setTimeout(() => {
 			f.apply(this, arg);
@@ -24,14 +24,6 @@ const debounceDecorator = (f, delay = 0) => {
 		}, delay);
 	};
 };
-
-const chunk = (arr, size = 1) => {
-	const a = arr || [];
-	
-	return Array(Math.ceil(a.length / size))
-		.fill([])
-		.map((e, inx) => a.slice(inx * size, inx * size + size));
-}
 
 class SortableTableRow {
 	cells;
@@ -64,12 +56,12 @@ export default class SortableTable {
 	headersConfig = [];
 	sorted = {};
 	data = [];
+	allData = [];
 	url = "";
 	paggination = {
 		size: 5,
 		page: 1,
-	}
-	chunkData = [];
+	};
 
 	static getSubElements(element) {
 		return Array.from(element.querySelectorAll("[data-elem]")).reduce(
@@ -94,6 +86,20 @@ export default class SortableTable {
 			Object.keys[SortableTable.sortStrategy][0]
 		](direction, a, b);
 	}
+
+	static chunk(arr = [], size) {
+		const a = [...arr];
+
+		return Array(Math.ceil(a.length / size))
+			.fill([])
+			.map((e, inx) => a.slice(inx * size, inx * size + size));
+	}
+
+	static getOrder = (order) =>
+		({
+			asc: "desc",
+			desc: "asc",
+		}[order]);
 
 	get template() {
 		return `
@@ -126,15 +132,23 @@ export default class SortableTable {
 		} = {}
 	) {
 		this.headersConfig = headersConfig;
-		this.chunkData = chunk(data, pageSize);
-		this.data = this.chunkData[this.paggination.page - 1];
-		this.url = url.trim() ? new URL(url.trim(), BACKEND_URL) : url;
-		this.paggination.size = pageSize;
 		this.sorted = sorted;
-
+		this.paggination.size = pageSize;
+		this.allData = this.getSortArray(data, this.sorted.id, this.sorted.order);
+		this.data = this.getDataOfPage(this.paggination.page);
+		// this.chunkData = SortableTable.chunk(data, pageSize);
+		// this.chunkData[this.paggination.page - 1] || [];
+		this.url = url.trim() ? new URL(url.trim(), BACKEND_URL) : null;
+		
 		this.onScroll = debounceDecorator(this.onScroll, 100);
 
 		this.render();
+
+		this.sort(this.sorted.id, this.sorted.order);
+	}
+
+	get _isSortServer() {
+		return Boolean(this.url);
 	}
 
 	render() {
@@ -145,12 +159,10 @@ export default class SortableTable {
 			...this.subElements,
 			...SortableTable.getSubElements(this.subElements.header),
 		};
-		
-		this.sort(this.sorted.id, this.sorted.order);
-
+		this.renderBody();
 		this.initEventListeners();
 	}
-	
+
 	renderHeader() {
 		this.subElements.header.innerHTML = this.headersConfig
 			.map(
@@ -210,7 +222,7 @@ export default class SortableTable {
 			this.onSortableCellHandler
 		);
 
-		document.addEventListener('scroll', this.onScroll);
+		document.addEventListener("scroll", this.onScroll);
 	}
 
 	removeEventListeners() {
@@ -222,62 +234,42 @@ export default class SortableTable {
 		document.removeEventListener("scroll", this.onScroll);
 	}
 
-	async loadData(page) {
-		this.url.searchParams.set('_sort', this.sorted.id);
-		this.url.searchParams.set('_order', this.sorted.order);
-		this.url.searchParams.set('_start', (page - 1) * this.paggination.size);
-		this.url.searchParams.set('_end', (page - 1) * this.paggination.size + this.paggination.size);
+	async loadData(
+		page = this.paggination.page,
+		{ id = this.sorted.id, order = this.sorted.order } = {}
+	) {
+		const { size } = this.paggination;
+
+		this.url.searchParams.set("_sort", id);
+		this.url.searchParams.set("_order", order);
+		this.url.searchParams.set("_start", (page - 1) * size);
+		this.url.searchParams.set("_end", (page - 1) * size + size);
 
 		return await fetchJson(this.url);
 	}
 
-	async scrollServer() {
-		const dataChunk = await this.loadData(this.paggination.page + 1);
-		
-		if (dataChunk.length) {
-			this.paggination.page += 1
-			this.data.push(...dataChunk);
-			this.renderBody();	
-		}
-	}
-
-	async scrollLocaly() {
-		const dataChunk = this.chunkData[this.paggination.page];
-		
-		if (dataChunk.length) {
-			this.paggination.page += 1
-			this.data.push(...dataChunk);
-			this.renderBody();	
-		}
-	}
-
-	async sortServer() {
-		this.loadingToggle();
-
-		this.data = await this.loadData(1);
-	
-		this.renderBody();
-
-		this.loadingToggle();
-	}
-
-	sortLocaly() {
+	getSortArray(arr, id, order) {
 		const { sortType, sortable } = this.headersConfig.find(
-			(e) => e.id === this.sorted.id
+			(e) => e.id === id
 		);
 
 		if (typeof sortable !== "function") {
-			this.data = this.data.sort((a, b) =>
-				SortableTable.sort(sortType, this.sorted.order, a[this.sorted.id], b[this.sorted.id])
+			return arr.sort((a, b) =>
+				SortableTable.sort(
+					sortType,
+					order,
+					a[id],
+					b[id]
+				)
 			);
 		} else {
-			this.data = this.data.sort((a, b) => sortable(this.sorted.order, a[this.sorted.id], b[this.sorted.id]));
+			return arr.sort((a, b) =>
+				sortable(this.sorted.order, a[this.sorted.id], b[this.sorted.id])
+			);
 		}
-
-		this.renderBody();
 	}
 
-	async sort(id, order = 'asc') {
+	async sort(id = this.sorted.id, order = this.sorted.order) {
 		this.sorted = {
 			id,
 			order,
@@ -286,24 +278,43 @@ export default class SortableTable {
 		this.updateSortArrow();
 
 		this.paggination.page = 1;
-		
-		if (this.url) {
-			await this.sortServer();
+
+		if (this._isSortServer) {
+			this.loadingToggle();
+			this.data = await this.loadData(this.paggination.page, this.sorted);
+			this.loadingToggle();
 		} else {
-			this.sortLocaly();
+			this.allData = this.getSortArray(this.allData, this.sorted.id, this.sorted.order);
+			this.data = this.getDataOfPage(this.paggination.page);
 		}
+
+		this.renderBody();
+	}
+
+	getDataOfPage(page) {
+		return SortableTable.chunk(this.allData, this.paggination.size)[page - 1] || []
 	}
 
 	async scroll() {
-		if (this.url) {
-			await this.scrollServer();
+		let dataChunk = [];
+
+		if (this._isSortServer) {
+			dataChunk = await this.loadData(this.paggination.page + 1, this.sorted);
 		} else {
-			this.scrollLocaly();
+			dataChunk = this.getDataOfPage(this.paggination.page + 1);
+		}
+
+		if (dataChunk && dataChunk.length) {
+			this.paggination.page += 1;
+			this.data.push(...dataChunk);
+			this.renderBody();
 		}
 	}
 
 	updateSortArrow() {
-		const column = this.subElements.header.querySelector(`[data-id="${this.sorted.id}"]`);
+		const column = this.subElements.header.querySelector(
+			`[data-id="${this.sorted.id}"]`
+		);
 
 		if (column) {
 			column.dataset.order = this.sorted.order;
@@ -323,18 +334,13 @@ export default class SortableTable {
 
 	onSortableCellHandler = ({ target }) => {
 		let cellClick = target.closest('[data-sortable="true"]');
-		
-		const getOrder = order => ({
-			asc: 'desc',
-			desc: 'asc',
-		}[order]);
 
 		if (cellClick) {
 			const {
 				dataset: { id, order },
 			} = cellClick;
 
-			this.sort(id, getOrder(order));
+			this.sort(id, SortableTable.getOrder(order));
 		}
 	};
 
