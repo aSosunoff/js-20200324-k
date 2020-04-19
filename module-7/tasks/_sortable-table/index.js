@@ -134,7 +134,7 @@ export default class SortableTable {
 		this.headersConfig = headersConfig;
 		this.sorted = sorted;
 		this.paggination.size = pageSize;
-		this.allData = this.getSortArray(data, this.sorted.id, this.sorted.order);
+		this.allData = data;
 		this.data = this.getDataOfPage(this.paggination.page);
 		// this.chunkData = SortableTable.chunk(data, pageSize);
 		// this.chunkData[this.paggination.page - 1] || [];
@@ -202,6 +202,22 @@ export default class SortableTable {
 		this.subElements.body.innerHTML = this.data
 			.map((e) => new SortableTableRow(cells, e).element)
 			.join("");
+	}
+
+	async renderNextPage() {
+		let dataChunk = [];
+
+		if (this._isSortServer) {
+			dataChunk = await this.loadData(this.paggination.page + 1, this.sorted);
+		} else {
+			dataChunk = this.getDataOfPage(this.paggination.page + 1);
+		}
+
+		if (dataChunk && dataChunk.length) {
+			this.paggination.page += 1;
+			this.data.push(...dataChunk);
+			this.renderBody();
+		}
 	}
 
 	loadingToggle() {
@@ -295,22 +311,6 @@ export default class SortableTable {
 		return SortableTable.chunk(this.allData, this.paggination.size)[page - 1] || []
 	}
 
-	async scroll() {
-		let dataChunk = [];
-
-		if (this._isSortServer) {
-			dataChunk = await this.loadData(this.paggination.page + 1, this.sorted);
-		} else {
-			dataChunk = this.getDataOfPage(this.paggination.page + 1);
-		}
-
-		if (dataChunk && dataChunk.length) {
-			this.paggination.page += 1;
-			this.data.push(...dataChunk);
-			this.renderBody();
-		}
-	}
-
 	updateSortArrow() {
 		const column = this.subElements.header.querySelector(
 			`[data-id="${this.sorted.id}"]`
@@ -349,7 +349,7 @@ export default class SortableTable {
 		const { clientHeight } = document.documentElement;
 
 		if (bottom < clientHeight + 100) {
-			this.scroll();
+			this.renderNextPage();
 		}
 	};
 }
