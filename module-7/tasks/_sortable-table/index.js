@@ -145,13 +145,15 @@ export default class SortableTable {
 				order: "asc",
 			},
 			url = "",
-			pageSize = 10,
+			pageSize = 5,
 		} = {}
 	) {
 		this.headersConfig = headersConfig;
 		this.sorted = sorted;
 		this.paggination.size = pageSize;
-		this.allData = data;
+		this.allData = SortableTable.chunk(
+			this.getSortArray(data, this.sorted.id, this.sorted.order), 
+			this.paggination.size);
 		this.url = url.trim() ? new URL(url.trim(), BACKEND_URL) : null;
 		
 		this.render();
@@ -290,6 +292,15 @@ export default class SortableTable {
 
 		this.renderArrow(this.sorted.id, this.sorted.order);
 
+		if (!this.isSortServer) {
+			this.allData = SortableTable.chunk(
+				this.getSortArray(
+					this.allData.reduce((r, e) => [...r, ...e], []), 
+					this.sorted.id, 
+					this.sorted.order), 
+				this.paggination.size);
+		}
+
 		this.renderBody();
 	}
 
@@ -299,11 +310,10 @@ export default class SortableTable {
 		if (this.isSortServer) {
 			data = await this.loadData(page, this.sorted);
 		} else {
-			this.allData = this.getSortArray(this.allData, this.sorted.id, this.sorted.order);
-			data = SortableTable.chunk(this.allData, this.paggination.size)[page - 1] || [];
+			data = this.allData[page - 1];
 		}
 
-		return data;
+		return data || [];
 	}
 
 	getSortArray(arr, id, order) {
