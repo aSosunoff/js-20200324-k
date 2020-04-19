@@ -130,6 +130,12 @@ export default class SortableTable {
 		return Boolean(this.url);
 	}
 
+	get checkBottomBorder() {
+		const { bottom } = document.documentElement.getBoundingClientRect();
+		const { clientHeight } = document.documentElement;
+		return bottom < clientHeight + 100;
+	}
+
 	constructor(
 		headersConfig,
 		{
@@ -139,7 +145,7 @@ export default class SortableTable {
 				order: "asc",
 			},
 			url = "",
-			pageSize = 15,
+			pageSize = 5,
 		} = {}
 	) {
 		this.headersConfig = headersConfig;
@@ -152,6 +158,13 @@ export default class SortableTable {
 		this.render();
 		this.setSettings();
 		this.sort(this.sorted.id, this.sorted.order);
+
+		/* setTimeout(() => {
+			while(this.checkBottomBorder){
+				this.renderNextPage();
+			}
+		}); */
+		/*  */
 	}
 
 	setSettings() {
@@ -331,10 +344,7 @@ export default class SortableTable {
 	};
 
 	onScroll = (event) => {
-		const { bottom } = document.documentElement.getBoundingClientRect();
-		const { clientHeight } = document.documentElement;
-
-		if (bottom < clientHeight + 100) {
+		if (this.checkBottomBorder) {
 			this.renderNextPage();
 		}
 	};
