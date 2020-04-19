@@ -41,12 +41,12 @@ class SortableTableRow {
 	}
 
 	render() {
-		this.element = `
+		this.element = createElementFromHTML(`
 			<div data-href="/products/${this.id}" class="sortable-table__row">
 				${this.cells
 					.map(({ id, template = this.template }) => template(this.data[id]))
 					.join("")}
-			</div>`;
+			</div>`);
 	}
 }
 
@@ -145,40 +145,43 @@ export default class SortableTable {
 				order: "asc",
 			},
 			url = "",
-			pageSize = 5,
+			pageSize = 10,
 		} = {}
 	) {
 		this.headersConfig = headersConfig;
 		this.sorted = sorted;
 		this.paggination.size = pageSize;
 		this.allData = data;
-		this.data = this.getDataOfPage(this.paggination.page);
 		this.url = url.trim() ? new URL(url.trim(), BACKEND_URL) : null;
 		
 		this.render();
 		this.setSettings();
-		this.sort(this.sorted.id, this.sorted.order);
+	}
 
-		/* setTimeout(() => {
+	renderDataFromVisibleSpace() {
+		setTimeout(async () => {
 			while(this.checkBottomBorder){
-				this.renderNextPage();
+				await this.renderNextPage();
 			}
-		}); */
-		/*  */
+		});
 	}
 
 	setSettings() {
 		this.onScroll = debounceDecorator(this.onScroll, 100);
 		this.initEventListeners();
+		this.sort(this.sorted.id, this.sorted.order);
 	}
 
 	render() {
 		this.element = createElementFromHTML(this.template);
+		
 		this.subElements = { 
 			...SortableTable.getSubElements(this.element), 
 			arrow: createElementFromHTML(this.arrowTemplate)
 		};
+		
 		this.renderHeader();
+
 		this.renderBody();
 	}
 
@@ -197,37 +200,42 @@ export default class SortableTable {
 			.join("");
 	}
 
-	renderBody() {
-		if (!this.data.length) {
+	async renderBody() {
+		this.paggination.page = 1;
+		this.element.classList.add("sortable-table_loading");
+		const dataFirstPage = await this.getDataOfPage(1);
+		this.element.classList.remove("sortable-table_loading");
+		
+		if (!dataFirstPage.length) {
 			this.element.classList.add("sortable-table_empty");
 			return;
 		} else {
 			this.element.classList.remove("sortable-table_empty");
 		}
 
+		this.subElements.body.innerHTML = '';
+		
+		this.renderBodyNextRows(dataFirstPage);
+
+		this.renderDataFromVisibleSpace();
+	}
+
+	renderBodyNextRows(data = []) {
 		const cells = this.headersConfig.map(({ id, template }) => ({
 			id,
 			template,
 		}));
 
-		this.subElements.body.innerHTML = this.data
-			.map((e) => new SortableTableRow(cells, e).element)
-			.join("");
+		this.subElements.body.append(...data
+			.map((e) => new SortableTableRow(cells, e).element));
 	}
 
 	async renderNextPage() {
-		let dataChunk = [];
-
-		if (this.isSortServer) {
-			dataChunk = await this.loadData(this.paggination.page + 1, this.sorted);
-		} else {
-			dataChunk = this.getDataOfPage(this.paggination.page + 1);
-		}
+		let dataChunk = await this.getDataOfPage(this.paggination.page + 1);
 
 		if (dataChunk && dataChunk.length) {
 			this.paggination.page += 1;
-			this.data.push(...dataChunk);
-			this.renderBody();
+			this.renderBodyNextRows(dataChunk);
 		}
 	}
 
@@ -274,7 +282,7 @@ export default class SortableTable {
 		return await fetchJson(this.url);
 	}
 
-	async sort(id = this.sorted.id, order = this.sorted.order) {
+	sort(id = this.sorted.id, order = this.sorted.order) {
 		this.sorted = {
 			id,
 			order,
@@ -282,22 +290,20 @@ export default class SortableTable {
 
 		this.renderArrow(this.sorted.id, this.sorted.order);
 
-		this.paggination.page = 1;
-
-		if (this.isSortServer) {
-			this.element.classList.add("sortable-table_loading");
-			this.data = await this.loadData(this.paggination.page, this.sorted);
-			this.element.classList.remove("sortable-table_loading");
-		} else {
-			this.allData = this.getSortArray(this.allData, this.sorted.id, this.sorted.order);
-			this.data = this.getDataOfPage(this.paggination.page);
-		}
-
 		this.renderBody();
 	}
 
-	getDataOfPage(page) {
-		return SortableTable.chunk(this.allData, this.paggination.size)[page - 1] || []
+	async getDataOfPage(page) {
+		let data = [];
+
+		if (this.isSortServer) {
+			data = await this.loadData(page, this.sorted);
+		} else {
+			this.allData = this.getSortArray(this.allData, this.sorted.id, this.sorted.order);
+			data = SortableTable.chunk(this.allData, this.paggination.size)[page - 1] || [];
+		}
+
+		return data;
 	}
 
 	getSortArray(arr, id, order) {
@@ -331,7 +337,7 @@ export default class SortableTable {
 		this.subElements = {};
 	}
 
-	onSortableCellHandler = ({ target }) => {
+	onSortableCellHandler = async ({ target }) => {
 		let cellClick = target.closest('[data-sortable="true"]');
 
 		if (cellClick) {
