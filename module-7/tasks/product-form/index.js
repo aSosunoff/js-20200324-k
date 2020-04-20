@@ -169,11 +169,13 @@ export default class ProductFormComponent {
 	initEventListeners() {
 		this.subElements.productForm.addEventListener('submit', this.onSubmit);
 		this.subElements.productForm.uploadImage.addEventListener('click', this.onUploadImage);
+		this.subElements.sortableList.addEventListener('click', this.onRemoveImage);
 	}
 
 	removeEventListeners() {
 		this.subElements.productForm.removeEventListeners('submit', this.onSubmit);
 		this.subElements.productForm.uploadImage.removeEventListeners('click', this.onUploadImage);
+		this.subElements.sortableList.removeEventListeners('click', this.onRemoveImage);
 	}
 
 	remove() {
@@ -195,4 +197,11 @@ export default class ProductFormComponent {
 	onUploadImage = () => {
 		this.uploadImage();
 	};
+
+	onRemoveImage = ({ target }) => {
+		const image = target.closest('li');
+		if("deleteHandle" in target.dataset && image) {
+			image.remove();
+		}
+	}
 }
