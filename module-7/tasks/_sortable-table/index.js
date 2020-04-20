@@ -1,12 +1,8 @@
-import fetchJson from "../../utils/fetch-json.js";
+import fetchJson from "../../../utils/fetch-json.js";
+import HTMLBulder from '../../../utils/HTMLBulder.js';
+import SubElements from '../../../utils/SubElements.js';
 
 const BACKEND_URL = "https://course-js.javascript.ru";
-
-function createElementFromHTML(htmlString) {
-	var div = document.createElement("div");
-	div.innerHTML = htmlString.trim();
-	return div.firstElementChild;
-}
 
 const debounceDecorator = (f, delay = 0) => {
 	let timer = null;
@@ -41,7 +37,7 @@ class SortableTableRow {
 	}
 
 	render() {
-		this.element = createElementFromHTML(`
+		this.element = HTMLBulder.getElementFromString(`
 			<div data-href="/products/${this.id}" class="sortable-table__row">
 				${this.cells
 					.map(({ id, template = this.template }) => template(this.data[id]))
@@ -175,11 +171,11 @@ export default class SortableTable {
 	}
 
 	render() {
-		this.element = createElementFromHTML(this.template);
+		this.element = HTMLBulder.getElementFromString(this.template);
 		
 		this.subElements = { 
-			...SortableTable.getSubElements(this.element), 
-			arrow: createElementFromHTML(this.arrowTemplate)
+			...new SubElements(this.element).subElements("[data-elem]"), 
+			arrow: HTMLBulder.getElementFromString(this.arrowTemplate)
 		};
 		
 		this.renderHeader();
