@@ -43,7 +43,7 @@ export default class ProductFormComponent {
 				<div class="form-group form-group__half_left">
 					<fieldset>
 						<label class="form-label">Категория</label>
-						<select data-elem="categoryList" class="form-control" name="category"></select>
+						<select data-elem="categories" class="form-control" name="category"></select>
 					</fieldset>
 				</div>
 				<div class="form-group form-group__half_left form-group__two-col">
@@ -62,10 +62,7 @@ export default class ProductFormComponent {
 				</div>
 				<div class="form-group form-group__part-half">
 					<label class="form-label">Статус</label>
-					<select class="form-control" name="status">
-						<option value="1">Активен</option>
-						<option value="0">Неактивен</option>
-					</select>
+					<select data-elem="status" class="form-control" name="status"></select>
 				</div>
 				<div class="form-buttons">
 					<button type="submit" name="save" class="button-primary-outline">
@@ -89,16 +86,35 @@ export default class ProductFormComponent {
 
 		this.renderCategoryList();
 
+		this.renderStatusList();
+
 		this.formData.images.forEach(this.renderNewElementToSortableList.bind(this));
 
 		this.initEventListeners();
 	}
 
 	renderCategoryList() {
-		this.subElements.categoryList.innerHTML = '';
-		this.subElements.categoryList
+		this.subElements.categories.innerHTML = '';
+		this.subElements.categories
 			.append(...this.formData.categories
 				.map(e => HTMLBulder.getElementFromString(`<option value="${e.value}">${e.text}</option>`)));
+
+		const { index = 0 } = this.subElements.categories.querySelector(`[value=${this.formData.subcategory}]`)
+		this.subElements.categories.selectedIndex = index;
+	}
+
+	renderStatusList() {
+		this.subElements.status.innerHTML = '';
+
+		const status = [
+			{ value: 1, text: "Активен" }, 
+			{ value: 0, text: "Неактивен" }];
+		
+		this.subElements.status
+			.append(...status.map(e => HTMLBulder.getElementFromString(`<option value="${e.value}">${e.text}</option>`)));
+		
+		const { index = 0 } = this.subElements.status.querySelector(`[value="${Number(this.formData.status) || 0}"]`)
+		this.subElements.status.selectedIndex = index;
 	}
 
 	renderNewElementToSortableList(img) {
