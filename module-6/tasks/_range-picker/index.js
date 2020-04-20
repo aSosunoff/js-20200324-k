@@ -1,8 +1,5 @@
-function createElementFromHTML(htmlString) {
-	var div = document.createElement("div");
-	div.innerHTML = htmlString.trim();
-	return div.firstElementChild;
-}
+import HTMLBulder from '../../../utils/HTMLBulder.js';
+import SubElements from '../../../utils/SubElements.js';
 
 export default class RangePicker {
 	element;
@@ -28,13 +25,6 @@ export default class RangePicker {
 					year: "numeric",
 			  })
 			: "";
-	}
-
-	static getSubElements(element) {
-		return Array.from(element.querySelectorAll("[data-elem]")).reduce(
-			(res, subElement) => ((res[subElement.dataset.elem] = subElement), res),
-			{}
-		);
 	}
 
 	get template() {
@@ -222,8 +212,8 @@ export default class RangePicker {
 	}
 
 	render() {
-		this.element = createElementFromHTML(this.template);
-		this.subElements = RangePicker.getSubElements(this.element);
+		this.element = HTMLBulder.getElementFromString(this.template);
+		this.subElements = new SubElements(this.element).subElements("[data-elem]");
 		this.renderFromToDate();
 		this.element.addEventListener("click", this.onPickerToggle, true);
 	}

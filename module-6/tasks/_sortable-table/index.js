@@ -1,12 +1,8 @@
-import fetchJson from "../../utils/fetch-json.js";
+import fetchJson from '../../../utils/fetch-json.js';
+import HTMLBulder from '../../../utils/HTMLBulder.js';
+import SubElements from '../../../utils/SubElements.js';
 
 const BACKEND_URL = "https://course-js.javascript.ru";
-
-function createElementFromHTML(htmlString) {
-	var div = document.createElement("div");
-	div.innerHTML = htmlString.trim();
-	return div.firstElementChild;
-}
 
 class SortableTableRow {
 	cells;
@@ -39,13 +35,6 @@ export default class SortableTable {
 	headersConfig = [];
 	data = [];
 	url = "";
-
-	static getSubElements(element) {
-		return Array.from(element.querySelectorAll("[data-elem]")).reduce(
-			(res, subElement) => ((res[subElement.dataset.elem] = subElement), res),
-			{}
-		);
-	}
 
 	static sortStrategy = {
 		number: (direction, a, b) => direction * (a - b),
@@ -101,12 +90,12 @@ export default class SortableTable {
 	}
 
 	render(id, order) {
-		this.element = createElementFromHTML(this.template);
-		this.subElements = SortableTable.getSubElements(this.element);
+		this.element = HTMLBulder.getElementFromString(this.template);
+		this.subElements = new SubElements(this.element).subElements("[data-elem]");
 		this.renderHeader(id, order);
 		this.subElements = {
 			...this.subElements,
-			...SortableTable.getSubElements(this.subElements.header),
+			...new SubElements(this.subElements.header).subElements("[data-elem]"),
 		};
 		
 		this.sort(id, order);

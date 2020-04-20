@@ -1,8 +1,4 @@
-function createElementFromHTML(htmlString) {
-	var div = document.createElement("div");
-	div.innerHTML = htmlString.trim();
-	return div.firstElementChild;
-}
+import HTMLBulder from '../../utils/HTMLBulder.js';
 
 export class NotificationMessage {
 	element;
@@ -40,7 +36,7 @@ export class NotificationMessage {
 		this.type = type;
 		this.message = message;
 		this.isClose = isClose;
-		this.element = createElementFromHTML(this.template);
+		this.element = HTMLBulder.getElementFromString(this.template);
 		this.initEventListeners();
 	}
 
