@@ -18,7 +18,11 @@
 				template: (data) => {
 					return `
 						<div class="sortable-table__cell">
-							${data.length ? `<img class="sortable-table-image" alt="Image" src="${data[0].url}">` : ''}
+							${
+								data.length
+									? `<img class="sortable-table-image" alt="Image" src="${data[0].url}">`
+									: ""
+							}
 						</div>
 						`;
 				},
@@ -57,20 +61,22 @@
 			{
 				id: "status",
 				title: "Статус",
-				sortable: (order, a, b) => (order === 'asc' ? -1 : 1) * (a - b),
+				sortable: (order, a, b) => (order === "asc" ? -1 : 1) * (a - b),
 				template: (data) => {
 					return `
 					<div class="sortable-table__cell">
-						${data == 1 ? 'В наличии' : 'Отсутствует'}
+						${data == 1 ? "В наличии" : "Отсутствует"}
 					</div>
 					`;
 				},
-			}
+			},
 		];
 
 		// const sortableTable = new SortableTable(header, { data });
 
-		const sortableTable = new SortableTable(header, { url: 'api/rest/products' });
+		const sortableTable = new SortableTable(header, {
+			url: "api/rest/products",
+		});
 
 		window.sortableTable = sortableTable;
 

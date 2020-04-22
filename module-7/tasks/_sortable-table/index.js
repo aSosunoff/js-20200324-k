@@ -59,13 +59,6 @@ export default class SortableTable {
 		page: 1,
 	};
 
-	static getSubElements(element) {
-		return Array.from(element.querySelectorAll("[data-elem]")).reduce(
-			(res, subElement) => ((res[subElement.dataset.elem] = subElement), res),
-			{}
-		);
-	}
-
 	static sortStrategy = {
 		number: (direction, a, b) => direction * (a - b),
 		string: (direction, a, b) => direction * new Intl.Collator().compare(a, b),

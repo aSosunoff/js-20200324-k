@@ -7,7 +7,11 @@
 	<div id="root"></div>
 
 	<script type="module">
-		import SortableTable from "./index.js";
+		import Table from "./Table.js";
+		import TableServer from "./TableServer.js";
+		import TablePagging from "./TablePagging.js";
+		import InfinityScroll from "./InfinityScroll.js";
+
 		import data from "./products-data.js";
 
 		const header = [
@@ -68,12 +72,16 @@
 			}
 		];
 
-		// const sortableTable = new SortableTable(header, { data });
+		// const table = new Table(header, { data });
+		// const table = new TablePagging(header, { data, pageSize: 7 });
+		const table = new TableServer(header, { url: 'api/rest/products', pageSize: 14 });
+		new InfinityScroll(table.element);
+		table.element.addEventListener('infinity-scroll', () => {
+			table.renderNextPage();
+		});
 
-		const sortableTable = new SortableTable(header, { url: 'api/rest/products' });
+		window.table = table;
 
-		window.sortableTable = sortableTable;
-
-		root.append(sortableTable.element);
+		root.append(table.element);
 	</script>
 </body>
