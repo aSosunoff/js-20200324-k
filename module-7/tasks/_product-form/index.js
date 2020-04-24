@@ -1,6 +1,7 @@
 import ImageUploader from '../../../utils/ImageUploader.js';
 import HTMLBulder from '../../../utils/HTMLBulder.js';
 import SubElements from '../../../utils/SubElements.js';
+import fetchJson from '../../../utils/fetch-json.js';
 
 export default class ProductFormComponent {
 	element;
@@ -161,10 +162,14 @@ export default class ProductFormComponent {
 		});
 	};
 
-	dispatchEvent() {
-		this.element.dispatchEvent(new CustomEvent("product-saved", {
+	dispatchEvent(formData) {
+		const event = this.formData.productId 
+			? "product-updated"
+			: "product-saved";
+
+		this.element.dispatchEvent(new CustomEvent(event, {
 			detail: {
-				formData: this.getFormData(),
+				formData,
 			},
 			bubbles: true,
 		}));
@@ -205,9 +210,21 @@ export default class ProductFormComponent {
 		this.subElements = null;
 	}
 
-	onSubmit = (event) => {
+	onSubmit = async (event) => {
 		event.preventDefault();
-		this.dispatchEvent();
+		const formData = this.getFormData();
+
+		const product = await fetchJson("https://course-js.javascript.ru/api/rest/products", {
+			method:"PATCH",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(formData)
+		});
+
+		console.log(product);
+		
+		this.dispatchEvent(formData);
 	};
 	
 	onUploadImage = () => {
