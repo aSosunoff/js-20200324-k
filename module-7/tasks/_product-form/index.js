@@ -97,7 +97,7 @@ export default class ProductFormComponent {
 		this.subElements.categories.innerHTML = '';
 		this.subElements.categories
 			.append(...this.formData.categories
-				.map(e => HTMLBulder.getElementFromString(`<option value="${e.value}">${e.text}</option>`)));
+				.map(e => new Option(e.text, e.value)));
 
 		const { index = 0 } = this.subElements.categories.querySelector(`[value=${this.formData.subcategory}]`)
 		this.subElements.categories.selectedIndex = index;
