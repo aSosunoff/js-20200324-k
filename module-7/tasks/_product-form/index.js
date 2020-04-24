@@ -3,6 +3,8 @@ import HTMLBulder from '../../../utils/HTMLBulder.js';
 import SubElements from '../../../utils/SubElements.js';
 import fetchJson from '../../../utils/fetch-json.js';
 
+const BACKEND_URL = 'https://course-js.javascript.ru';
+
 export default class ProductFormComponent {
 	element;
 	subElements = {};
@@ -175,6 +177,13 @@ export default class ProductFormComponent {
 		}));
 	}
 
+	dispatchEventError(e) {
+		this.element.dispatchEvent(new CustomEvent("product-error", {
+			detail: e,
+			bubbles: true,
+		}));
+	}
+
 	getFormData() {
 		const formData = new FormData(productForm.subElements.productForm);
 		const imagesElementArray = Array.from(this.subElements.sortableList.querySelectorAll(".sortable-table__cell-img"))
@@ -213,18 +222,21 @@ export default class ProductFormComponent {
 	onSubmit = async (event) => {
 		event.preventDefault();
 		const formData = this.getFormData();
+		const url = new URL('/api/rest/products', BACKEND_URL);
 
-		const product = await fetchJson("https://course-js.javascript.ru/api/rest/products", {
-			method:"PATCH",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify(formData)
-		});
-
-		console.log(product);
-		
-		this.dispatchEvent(formData);
+		try {
+			const product = await fetchJson(url, {
+				method:"POST",
+				headers: { 'Content-Type': 'application/json;charset=utf-8' },
+				body: JSON.stringify(formData)
+			});
+	
+			console.log(product);
+			
+			this.dispatchEvent(formData);
+		} catch(err) {
+			this.dispatchEventError(err);
+		}
 	};
 	
 	onUploadImage = () => {
