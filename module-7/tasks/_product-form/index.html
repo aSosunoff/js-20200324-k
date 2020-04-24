@@ -18,7 +18,7 @@
 		import ProductFormComponent from "./index.js";
 		import categories from "./categories.js";
 
-		const productData = {
+		/* const productData = {
 			title: "foo",
 			description: "bar",
 			subcategory: "kormlenie-i-gigiena",
@@ -37,9 +37,11 @@
 				},
 			],
 			categories,
-		};
+		}; */
 
-		const productForm = new ProductFormComponent(productData);
+		const idProduct = 'cehol-dla-tv-pulta-wimax-50230';
+
+		const productForm = new ProductFormComponent(idProduct);
 
 		root.append(productForm.element);
 
