@@ -28,9 +28,7 @@ export default class DoubleSlider {
 			to: max,
 		},
 	} = {}) {
-		this.min = min;
-		this.max = max;
-		this.setSelected(selected);
+		this.setSelected({ ...selected, min, max });
 		this.formatValue = formatValue;
 		this.render();
 	}
@@ -72,17 +70,9 @@ export default class DoubleSlider {
 		}));
 	}
 
-	setScope({ min, max }) {
-		this.selected.from = Math.max(min, this.selected.from);
-		this.selected.to = Math.min(max, this.selected.to);
-
-		this.min = min;
-		this.max = max;
-	}
-
-	setSelected({ from, to }){
-		this.min = Math.min(this.min, from);
-		this.max = Math.max(this.max, to);
+	setSelected({ max = this.max, min = this.min, from, to }){
+		this.min = Math.min(min, from);
+		this.max = Math.max(max, to);
 		this.selected = { from, to };
 	}
 
