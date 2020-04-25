@@ -6,13 +6,17 @@ export default class HTMLBulder{
     }
 
     static createUploadImageInput(callbackChange) {
-        const inputFile = document.createElement("input");
-        inputFile.type = "file";
-        inputFile.multiple = true;
-		inputFile.accept = "image/*";
-		inputFile.hidden = true;
-        inputFile.addEventListener('change', callbackChange);
+        let inputFile = document.querySelector('input[data-file-load="file-load"][type="file"]');
+        if (!inputFile) {
+            inputFile = document.createElement("input");
+            inputFile.dataset.fileLoad = "file-load";
+            inputFile.type = "file";
+            inputFile.multiple = true;
+            inputFile.accept = "image/*";
+            inputFile.hidden = true;
+            document.body.appendChild(inputFile);
+        }
+        inputFile.onchange = callbackChange;
         inputFile.click();
-		document.body.appendChild(inputFile);
     }
 }
