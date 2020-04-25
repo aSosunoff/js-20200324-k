@@ -293,6 +293,7 @@ export default class ProductFormComponent {
 			this.dispatchEvent(formData);
 		} catch(err) {
 			this.dispatchEventError(err);
+			throw err;
 		}
 	};
 	
