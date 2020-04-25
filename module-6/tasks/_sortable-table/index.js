@@ -1,6 +1,6 @@
 import fetchJson from '../../../utils/fetch-json.js';
 import HTMLBulder from '../../../utils/HTMLBulder.js';
-import SubElements from '../../../utils/SubElements.js';
+import subElements from '../../../utils/subElements.js';
 
 const BACKEND_URL = "https://course-js.javascript.ru";
 
@@ -91,11 +91,11 @@ export default class SortableTable {
 
 	render(id, order) {
 		this.element = HTMLBulder.getElementFromString(this.template);
-		this.subElements = new SubElements(this.element).subElements("[data-elem]");
+		this.subElements = subElements(this.element, "[data-elem]");
 		this.renderHeader(id, order);
 		this.subElements = {
 			...this.subElements,
-			...new SubElements(this.subElements.header).subElements("[data-elem]"),
+			...subElements(this.subElements.header, "[data-elem]"),
 		};
 		
 		this.sort(id, order);

@@ -1,6 +1,6 @@
 import ImageUploader from '../../../utils/ImageUploader.js';
 import HTMLBulder from '../../../utils/HTMLBulder.js';
-import SubElements from '../../../utils/SubElements.js';
+import subElements from '../../../utils/subElements.js';
 import fetchJson from '../../../utils/fetch-json.js';
 import escapeHtml from '../../../utils/escape-html.js';
 
@@ -11,6 +11,7 @@ export default class ProductFormComponent {
 	subElements = {};
 	idProduct = null;
 	defaultFormData = {
+		id: null,
 		title: "",
 		description: "",
 		subcategory: "",
@@ -27,6 +28,7 @@ export default class ProductFormComponent {
 		return `
 		<div class="product-form">
 			<form data-elem="productForm" class="form-grid">
+				<input type="hidden" name="id" value=""/>
 				<div class="form-group form-group__wide">
 					<fieldset>
 						<label class="form-label">Название товара</label>
@@ -80,32 +82,37 @@ export default class ProductFormComponent {
 	}
 
 	constructor(idProduct) {
-		this.idProduct = idProduct;
-
 		this.render();
+		this.renderData(idProduct);
 	}
 
-	async render() {
+	render() {
 		this.element = HTMLBulder.getElementFromString(this.template);
 
-		this.subElements = new SubElements(this.element).subElements("[data-elem]");
+		this.subElements = subElements(this.element, "[data-elem]");
 
+		this.initEventListeners();
+	}
+
+	async renderData(idProduct) {
 		let loadFormData = Promise.resolve(this.defaultFormData);
-		if(this.idProduct){
-			loadFormData = this.loadProduct();
+		if(idProduct){
+			loadFormData = this.loadProduct(idProduct);
 		}
 
 		const [product, categories] = await Promise.all([loadFormData, this.loadSubcategory()]);
 
 		this.renderCategoryList(categories);
 
-		this.renderStatusList(product);
+		this.renderStatusList([
+			{ value: 1, text: "Активен" }, 
+			{ value: 0, text: "Неактивен" }]);
 
 		this.renderValue(product);
 
-		product.images.forEach(this.renderNewElementToSortableList);
-
-		this.initEventListeners();
+		this.clearSortableList();
+		
+		product.images.forEach(this.renderNewElementToSortableList.bind(this));
 	}
 
 	renderValue(product){
@@ -119,7 +126,12 @@ export default class ProductFormComponent {
 	renderCategoryList(categories) {
 		const options = categories
 			.reduce((options, { title: titleCategory, subcategories }) => {
-				const optionsSubcategories = subcategories.map(({ id, title }) => new Option(`${titleCategory} > ${title}`, id));
+				const head = new Option(`${titleCategory}`, null);
+				head.disabled = true;
+
+				const optionsSubcategories = [
+					head, 
+					...subcategories.map(({ id, title }) => new Option(`- ${title}`, id))];
 				options.push(...optionsSubcategories);
 				return options;
 			}, []);
@@ -128,9 +140,9 @@ export default class ProductFormComponent {
 		this.subElements.productForm.subcategory.append(...options);
 	}
 
-	async loadProduct() {
+	async loadProduct(idProduct) {
 		const url = new URL('api/rest/products', BACKEND_URL);
-		url.searchParams.set("id", this.idProduct);
+		url.searchParams.set("id", idProduct);
 		const [data] = await fetchJson(url);
 		return data;
 	}
@@ -143,15 +155,14 @@ export default class ProductFormComponent {
 		return data;
 	}
 
-	renderStatusList({status}) {
+	renderStatusList(statusList) {
 		this.subElements.productForm.status.innerHTML = '';
-
-		const statusList = [
-			{ value: 1, text: "Активен" }, 
-			{ value: 0, text: "Неактивен" }];
-		
 		this.subElements.productForm.status
 			.append(...statusList.map(({ text, value }) => new Option(text, value)));
+	}
+
+	clearSortableList(){
+		this.subElements.sortableList.innerHTML = '';
 	}
 
 	renderNewElementToSortableList = ({source, url}) => {
@@ -197,7 +208,7 @@ export default class ProductFormComponent {
 	};
 
 	dispatchEvent(formData) {
-		const event = this.idProduct 
+		const event = formData.id 
 			? "product-updated"
 			: "product-saved";
 
@@ -220,7 +231,6 @@ export default class ProductFormComponent {
 		const formData = new FormData(productForm.subElements.productForm);
 		const imagesElementArray = Array.from(this.subElements.sortableList.querySelectorAll(".sortable-table__cell-img"))
 		return {
-			id: this.idProduct,
 			...Object.fromEntries(formData),
 			images: imagesElementArray.map(({src, alt}) => ({
 				url: src,
@@ -250,7 +260,6 @@ export default class ProductFormComponent {
 		this.removeEventListeners();
 		this.element = null;
 		this.subElements = null;
-		this.idProduct = null;
 	}
 
 	onSubmit = async (event) => {
