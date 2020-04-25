@@ -100,19 +100,24 @@ export default class ProductFormComponent {
 			loadFormData = this.loadProduct(idProduct);
 		}
 
-		const [product, categories] = await Promise.all([loadFormData, this.loadSubcategory()]);
+		try {
+			const [product, categories] = await Promise.all([loadFormData, this.loadSubcategory()]);
 
-		this.renderCategoryList(categories);
+			this.renderCategoryList(categories);
 
-		this.renderStatusList([
-			{ value: 1, text: "Активен" }, 
-			{ value: 0, text: "Неактивен" }]);
+			this.renderStatusList([
+				{ value: 1, text: "Активен" }, 
+				{ value: 0, text: "Неактивен" }]);
 
-		this.renderValue(product);
+			this.renderValue(product);
 
-		this.clearSortableList();
-		
-		product.images.forEach(this.renderNewElementToSortableList.bind(this));
+			this.clearSortableList();
+			
+			product.images.forEach(this.renderNewElementToSortableList.bind(this));
+		} catch(err) {
+			this.dispatchEventError(err);
+			throw err;
+		}
 	}
 
 	renderValue(product){
@@ -141,18 +146,28 @@ export default class ProductFormComponent {
 	}
 
 	async loadProduct(idProduct) {
-		const url = new URL('api/rest/products', BACKEND_URL);
-		url.searchParams.set("id", idProduct);
-		const [data] = await fetchJson(url);
-		return data;
+		try {
+			const url = new URL('api/rest/products', BACKEND_URL);
+			url.searchParams.set("id", idProduct);
+			const [data] = await fetchJson(url);
+			return data;
+		} catch(err) {
+			this.dispatchEventError(err);
+			throw err;
+		}
 	}
 
 	async loadSubcategory() {
-		const url = new URL('api/rest/categories', BACKEND_URL);
-		url.searchParams.set("_sort", 'weight');
-		url.searchParams.set("_refs", 'subcategory');
-		const data = await fetchJson(url);
-		return data;
+		try {
+			const url = new URL('api/rest/categories', BACKEND_URL);
+			url.searchParams.set("_sort", 'weight');
+			url.searchParams.set("_refs", 'subcategory');
+			const data = await fetchJson(url);
+			return data;
+		} catch(err) {
+			this.dispatchEventError(err);
+			throw err;
+		}
 	}
 
 	renderStatusList(statusList) {
