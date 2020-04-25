@@ -1,15 +1,15 @@
 export default class SortableList {
-  element;
+	element;
 
-  constructor({ items = [] } = {}) {
-    this.items = items;
+	constructor({ items = [] } = {}) {
+		this.items = items;
 
-    this.render();
-  }
+		this.render();
+	}
 
-  render() {
-    // ...logic
-  }
+	render() {
+		// ...logic
+	}
 
-  // ... other methods
+	// ... other methods
 }
