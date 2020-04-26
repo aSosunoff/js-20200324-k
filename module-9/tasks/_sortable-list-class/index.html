@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="./style.css" />
+
+<body>
+	<div id="holder"></div>
+
+	<script type="module">
+		import SortableList from "./index.js";
+
+		const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+		const sortableList = new SortableList({
+			items: data,
+		});
+
+		sortableList.element.addEventListener('sortable-list-reorder', ({detail}) => {
+			console.log(detail);
+		});
+
+		holder.append(sortableList.element);
+
+		window.sortableList = sortableList;
+	</script>
+</body>
