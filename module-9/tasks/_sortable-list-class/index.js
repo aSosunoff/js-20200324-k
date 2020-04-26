@@ -2,28 +2,13 @@ import HTMLBulder from '../../../utils/HTMLBulder.js';
 
 export default class SortableList {
 	element;
-	items = [];
 
-	get trmplate() {
-		return '<ul class"sortable-list"></ul>';
-	}
-
-	constructor({ items = [] } = {}) {
-		this.items = items;
-
-		this.render();
-	}
-
-	render() {
-		this.element = HTMLBulder.getElementFromString(this.trmplate);
-		
-		this.items.forEach(this.addElement.bind(this));
-	
+	constructor({ container, childrenClass, dragClass, placeholderClass } = {}) {
+		this.element = container;
+		this.childrenClass = childrenClass;
+		this.dragClass = dragClass;
+		this.placeholderClass = placeholderClass;
 		this.initEventListener();
-	}
-
-	addElement(element) {
-		this.element.append(HTMLBulder.getElementFromString(`<li class="sortable-list__item" data-grab-handle>${element}</li>`));
 	}
 
 	initEventListener() {
@@ -42,11 +27,11 @@ export default class SortableList {
 		
 		item.style.width = item.offsetWidth + "px";
 		item.style.height = item.offsetHeight + "px";
-		this.placeholderElem = HTMLBulder.getElementFromString('<div class="sortable-list__placeholder"></div>');
+		this.placeholderElem = HTMLBulder.getElementFromString(`<div class="${this.placeholderClass}"></div>`);
 		this.placeholderElem.style.width = item.style.width;
 		this.placeholderElem.style.height = item.style.height;
 		item.after(this.placeholderElem);
-		item.classList.add('sortable-list__item_dragging');
+		item.classList.add(this.dragClass);
 		document.body.append(item);
 		this.draggingElemement = item;
 		this.moveDraggingAt(clientX, clientY)
@@ -99,9 +84,9 @@ export default class SortableList {
 		this.element.removeEventListener("pointerdown", this.onPointerDown);
 
 		this.moving(() => {
-			this.draggingElemement.classList.remove('sortable-list__item_dragging');
+			this.draggingElemement.classList.remove(this.dragClass);
 			this.placeholderElem.replaceWith(this.draggingElemement);
-			this.draggingElemement.classList.remove("sortable-list__item_dragging"),
+			this.draggingElemement.classList.remove(this.dragClass),
 			this.draggingElemement.style.left = "";
 			this.draggingElemement.style.top = "";
 			this.draggingElemement.style.width = "";
@@ -135,13 +120,12 @@ export default class SortableList {
 	destroy() {
 		this.remove();
 		this.removeEventListener();
-		this.items = [];
 	}
 
 	onPointerDown = (event) => {
 		if(event.button != 0) return;
 		event.preventDefault();
-		const item = event.target.closest('.sortable-list__item');
+		const item = event.target.closest(`.${this.childrenClass}`);
 		if (item) {
 			this.dragStart(item, event);
 		};
@@ -156,7 +140,9 @@ export default class SortableList {
 		this.moveDraggingAt(event.clientX, event.clientY);
 		this.scrollIfCloseToWindowEdge(event);
 
-		for (const item of this.element.children) {
+		const children = this.element.querySelectorAll(`.${this.childrenClass}`);
+
+		for (const item of children) {
 			if (event.clientY > item.getBoundingClientRect().top 
 				&& event.clientY < item.getBoundingClientRect().bottom) {
 					if (this.placeholderElem.getBoundingClientRect().bottom 

@@ -7,18 +7,22 @@
 
 	<script type="module">
 		import SortableList from "./index.js";
+		import HTMLBulder from '../../../utils/HTMLBulder.js';
 
-		const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		const ul = HTMLBulder.getElementFromString('<ul class"sortable-list"></ul>');
+
+		[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(e => {
+			ul.append(HTMLBulder.getElementFromString(`<li class="sortable-list__item" data-grab-handle>${e}</li>`));
+		});
+
+		holder.append(ul);
 
 		const sortableList = new SortableList({
-			items: data,
+			container: ul,
+			childrenClass: 'sortable-list__item',
+			dragClass: 'sortable-list__item_dragging',
+			placeholderClass: 'sortable-list__placeholder',
 		});
-
-		sortableList.element.addEventListener('sortable-list-reorder', ({detail}) => {
-			console.log(detail);
-		});
-
-		holder.append(sortableList.element);
 
 		window.sortableList = sortableList;
 	</script>
