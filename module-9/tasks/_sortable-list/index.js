@@ -47,7 +47,7 @@ export default class SortableList {
 		this.placeholderElem.style.height = item.style.height;
 		item.after(this.placeholderElem);
 		item.classList.add('sortable-list__item_dragging');
-		document.body.append(item);
+		this.element.append(item);
 		this.draggingElemement = item;
 		this.moveDraggingAt(clientX, clientY)
 
@@ -157,6 +157,8 @@ export default class SortableList {
 		this.scrollIfCloseToWindowEdge(event);
 
 		for (const item of this.element.children) {
+			if(this.draggingElemement == item) return;
+
 			if (event.clientY > item.getBoundingClientRect().top 
 				&& event.clientY < item.getBoundingClientRect().bottom) {
 					if (this.placeholderElem.getBoundingClientRect().bottom 

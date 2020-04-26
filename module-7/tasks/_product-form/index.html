@@ -16,8 +16,9 @@
 
 	<script type="module">
 		import ProductFormComponent from "./index.js";
+		import SortableList from "../../../module-9/tasks/_sortable-list-class/index.js";
 
-		const idProduct = 'cehol-dla-tv-pulta-wimax-50230';
+		const idProduct = "cehol-dla-tv-pulta-wimax-50230";
 
 		const productForm = new ProductFormComponent(idProduct);
 
@@ -25,6 +26,13 @@
 
 		productForm.element.addEventListener("product-saved", (event) => {
 			console.error("detail", event.detail);
+		});
+
+		const sortableList = new SortableList({
+			container: productForm.subElements.sortableList,
+			childrenClass: 'sortable-list__item',
+			dragClass: 'sortable-list__item_dragging',
+			placeholderClass: 'sortable-list__placeholder',
 		});
 
 		window.productForm = productForm;
