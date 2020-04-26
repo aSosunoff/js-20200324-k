@@ -131,8 +131,10 @@ export default class SortableList {
 
 	onPointerDown = (event) => {
 		if(event.button != 0) return;
+		const gragButton = event.target.closest('[data-grab-handle]');
+		if(!gragButton) return;
 		event.preventDefault();
-		const item = event.target.closest(`.${this.childrenClass}`);
+		const item = gragButton.closest(`.${this.childrenClass}`);
 		if (item) {
 			this.dragStart(item, event);
 		};

@@ -12,7 +12,13 @@
 		const ul = HTMLBulder.getElementFromString('<ul class"sortable-list"></ul>');
 
 		[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(e => {
-			ul.append(HTMLBulder.getElementFromString(`<li class="sortable-list__item" data-grab-handle>${e}</li>`));
+			ul.append(HTMLBulder
+				.getElementFromString(`
+					<li class="sortable-list__item">
+						<span data-grab-handle>[перетащить]</span>
+						${e}
+					</li>`
+				));
 		});
 
 		holder.append(ul);
