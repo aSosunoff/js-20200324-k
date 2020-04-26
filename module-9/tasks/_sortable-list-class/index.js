@@ -1,7 +1,10 @@
 import HTMLBulder from '../../../utils/HTMLBulder.js';
 
 export default class SortableList {
-	element;
+	element = null;
+	childrenClass = '';
+	dragClass = '';
+	placeholderClass = '';
 
 	constructor({ container, childrenClass, dragClass, placeholderClass } = {}) {
 		this.element = container;
@@ -120,6 +123,10 @@ export default class SortableList {
 	destroy() {
 		this.remove();
 		this.removeEventListener();
+		this.element = null;
+		this.childrenClass = '';
+		this.dragClass = '';
+		this.placeholderClass = '';
 	}
 
 	onPointerDown = (event) => {
