@@ -10,6 +10,7 @@ export default class Page {
   }
 
   initComponents () {
+    
     // init all child components
     // this.component.componentName = new ComponentName();
   }
