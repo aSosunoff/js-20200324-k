@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="_month-picker.css" />
+	</head>
+	<body>
+		<div id="holder"></div>
+
+		<script type="module">
+			import MonthPicker from "./_month-picker.js";
+
+			const monthPicker = new MonthPicker({
+				from: new Date(2020, 0, 1),
+				to: new Date(2020, 0, 5),
+			});
+
+			window.monthPicker = monthPicker;
+
+			holder.append(monthPicker.element);
+		</script>
+	</body>
+</html>

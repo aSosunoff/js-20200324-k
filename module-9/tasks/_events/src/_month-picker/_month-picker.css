@@ -1,0 +1,108 @@
+:root {
+	--blue: #109cf1;
+	--dark-blue: #334d6e;
+	--light-blue: #cfebfc;
+	--middle-blue: #9fd7f9;
+	--yellow: #ffb946;
+	--red: #f7685b;
+	--green: #2ed47a;
+	--purple: #885af8;
+	--black: #192a3e;
+	--table-black: #323c47;
+	--table-grey: #707683;
+	--grey: #90a0b7;
+	--grey-light: #c2cfe0;
+	--grey-extra-light: #eff1f4;
+	--grey-skeleton: #f5f6f8;
+	--white: #ffffff;
+}
+
+.month-picker {
+	position: relative;
+}
+
+.month-picker {
+	width: 252px;
+}
+
+.month-picker__cell {
+	cursor: pointer;
+}
+
+.month-picker__month-indicator {
+	text-align: center;
+	font-weight: 600;
+	font-size: 20px;
+	line-height: 24px;
+	padding: 0 15px;
+	color: var(--dark-blue);
+}
+
+.month-picker__day-of-week,
+.month-picker__date-grid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+}
+
+.month-picker__day-of-week {
+	margin-top: 28px;
+}
+
+.month-picker__day-of-week > * {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--grey);
+	text-align: center;
+}
+
+/* Dates */
+.month-picker__date-grid {
+	margin-top: 16px;
+}
+
+.month-picker__cell {
+	position: relative;
+	border: 0;
+	width: 36px;
+	height: 36px;
+	background-color: transparent;
+	color: var(--dark-blue);
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 20px;
+}
+
+.month-picker__cell:first-child {
+	grid-column-start: var(--start-from);
+}
+
+.month-picker__cell:active,
+.month-picker__cell.rangepicker__selected,
+.month-picker__cell.rangepicker__selected-from,
+.month-picker__cell.rangepicker__selected-to {
+	background-color: var(--blue);
+	color: var(--white);
+}
+
+.month-picker__cell:hover,
+.month-picker__cell:focus {
+	outline: none;
+	background-color: var(--light-blue);
+	color: var(--dark-blue);
+	transition: 0.2s all;
+}
+
+.month-picker__cell.rangepicker__selected:hover,
+.month-picker__cell.rangepicker__selected-from:hover,
+.month-picker__cell.rangepicker__selected-to:hover,
+.month-picker__cell.rangepicker__selected:focus,
+.month-picker__cell.rangepicker__selected-from:focus,
+.month-picker__cell.rangepicker__selected-to:focus {
+	background-color: var(--middle-blue);
+	color: var(--dark-blue);
+}
+
+.month-picker__cell.rangepicker__selected-between {
+	background-color: var(--light-blue);
+}

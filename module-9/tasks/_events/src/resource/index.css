@@ -1,0 +1,41 @@
+@import "./reset.css";
+@import "../_calendar-picker/_calendar-picker.css";
+
+.main {
+	display: grid;
+    grid-template-columns: 300px 1fr;
+	grid-template-rows: minmax(100vh, auto);
+	grid-template-areas: "sidebar content";
+}
+
+.sidebar {
+	grid-area: sidebar;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 100%;
+	padding: 15px;
+	box-shadow: 4px 0 10px #ddd;
+}
+
+.sidebar__title {
+	display: flex;
+    font-size: 24px;
+    line-height: 36px;
+    margin-top: 0;
+    margin-bottom: 32px;
+    text-transform: uppercase;
+    justify-content: center;
+}
+
+.sidebar__title a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.sidebar__title a:hover {
+	text-decoration: underline;
+}
+
+.content {
+	grid-area: content;
+}
