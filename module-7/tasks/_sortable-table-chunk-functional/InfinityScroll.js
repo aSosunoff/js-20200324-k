@@ -32,15 +32,17 @@ export default class InfinityScroll {
 		this.initEventListeners();
 	}
 
-	dispatchEvent () {
-		this.element.dispatchEvent(new CustomEvent('infinity-scroll', {
-		  bubbles: true,
-		  /* detail: {
+	dispatchEvent() {
+		this.element.dispatchEvent(
+			new CustomEvent("infinity-scroll", {
+				bubbles: true,
+				/* detail: {
 			start: this.start,
 			end: this.end
 		  } */
-		}));
-	  }
+			})
+		);
+	}
 
 	initEventListeners() {
 		document.addEventListener("scroll", this.onScroll);
