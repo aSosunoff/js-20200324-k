@@ -10,7 +10,6 @@
 ## Дополнительные материалы:
 
 * [Webpack](https://webpack.js.org/)
-
     Модули:
     * [webpack](https://github.com/webpack/webpack)
     * [webpack-cli](https://github.com/webpack/webpack-cli)
